@@ -22,10 +22,10 @@ import appDashboard from './modules/app_dashboard.js';
 function getApplicationStatusPresentation(statusValue) {
     const normalized = typeof statusValue === 'string' ? statusValue.trim().toLowerCase() : 'unknown';
     const statusLabel =
-        normalized === 'pending' ? 'In Progress' :
-        normalized === 'approved' ? 'Accepted' :
-        normalized === 'denied' ? 'Denied' :
-        'Unknown';
+        normalized === 'pending' ? 'Folyamatban' :
+        normalized === 'approved' ? 'Elfogadva' :
+        normalized === 'denied' ? 'Elutasitva' :
+        'Ismeretlen';
     const statusEmoji =
         normalized === 'pending' ? '🟡' :
         normalized === 'approved' ? '🟢' :
@@ -38,49 +38,49 @@ function getApplicationStatusPresentation(statusValue) {
 export default {
     data: new SlashCommandBuilder()
     .setName("app-admin")
-    .setDescription("Manage staff applications")
+    .setDescription("Jelentkezesek kezelese a szerveren")
     .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
     .addSubcommand((subcommand) =>
         subcommand
             .setName("setup")
-            .setDescription("Set up a new application")
+            .setDescription("Uj jelentkezesi opcio beallitasa")
     )
     .addSubcommand((subcommand) =>
         subcommand
             .setName("review")
-            .setDescription("Approve or deny an application")
+            .setDescription("Jelentkezes elfogadasa vagy elutasitasa")
             .addStringOption((option) =>
                 option
                     .setName("id")
-                    .setDescription("The application ID")
+                    .setDescription("A jelentkezes ID-ja")
                     .setRequired(true),
             ),
     )
     .addSubcommand((subcommand) =>
         subcommand
             .setName("list")
-            .setDescription("List all applications")
+            .setDescription("Minden jelentkezes listazasa")
             .addStringOption((option) =>
                 option
                     .setName("status")
-                    .setDescription("Filter by status")
+                    .setDescription("Szures statusz alapjan")
                     .addChoices(
-                        { name: "Pending", value: "pending" },
-                        { name: "Approved", value: "approved" },
-                        { name: "Denied", value: "denied" },
+                        { name: "Folyamatban", value: "pending" },
+                        { name: "Elfogadva", value: "approved" },
+                        { name: "Elutasitva", value: "denied" },
                     ),
             )
             .addStringOption((option) =>
-                option.setName("role").setDescription("Filter by role ID"),
+                option.setName("role").setDescription("Szures rang ID alapjan"),
             )
             .addUserOption((option) =>
-                option.setName("user").setDescription("Filter by user"),
+                option.setName("user").setDescription("Szures felhasznalo alapjan"),
             )
             .addNumberOption((option) =>
                 option
                     .setName("limit")
                     .setDescription(
-                        "Maximum number of applications to show (default: 10)",
+                        "Megjelenitendo jelentkezesek maximalis szama (alapertelmezett: 10)",
                     )
                     .setMinValue(1)
                     .setMaxValue(25),
@@ -89,11 +89,11 @@ export default {
     .addSubcommand((subcommand) =>
         subcommand
             .setName("dashboard")
-            .setDescription("Open the applications configuration dashboard")
+            .setDescription("Jelentkezesi rendszer vezerlopultjanak megnyitasa")
             .addStringOption((option) =>
                 option
                     .setName("application")
-                    .setDescription("Select an application to configure")
+                    .setDescription("Valassz egy jelentkezest a konfiguralashoz")
                     .setRequired(false)
                     .setAutocomplete(true),
             ),

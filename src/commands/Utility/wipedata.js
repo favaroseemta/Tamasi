@@ -8,22 +8,22 @@ export default {
     slashOnly: true,
     data: new SlashCommandBuilder()
         .setName('wipedata')
-        .setDescription('Delete all your personal data from the bot (irreversible)'),
+        .setDescription('Minden szemelyes adatod torlese a botbol (visszavonhatatlan)'),
 
     async execute(interaction, guildConfig, client) {
         const warningMessage = 
-            `⚠️ **THIS ACTION IS IRREVERSIBLE!** ⚠️\n\n` +
-            `This will permanently delete **ALL** your data from this server including:\n` +
-            `• 💰 Economy balance (wallet & bank)\n` +
-            `• 📊 Levels and XP\n` +
-            `• 🎒 Inventory items\n` +
-            `• 🛍️ Shop purchases\n` +
-            `• 🎂 Birthday information\n` +
-            `• 🔢 Counter data\n` +
-            `• 📋 All other personal data\n\n` +
-            `**This cannot be undone. Are you absolutely sure?**`;
+            `⚠️ **EZ A MUVELET VISSZAVONHATATLAN!** ⚠️\n\n` +
+            `Ez veglegesen torli **MINDEN** adatodat errol a szerverrol, beleertve:\n` +
+            `• 💰 Egyenleg (tarca es bank)\n` +
+            `• 📊 Szintek es XP\n` +
+            `• 🎒 Leltar targyak\n` +
+            `• 🛍️ Bolt vasarlasok\n` +
+            `• 🎂 Szuletesnapi adatok\n` +
+            `• 🔢 Szamlalo adatok\n` +
+            `• 📋 Minden egyeb szemelyes adat\n\n` +
+            `**Ez nem vonhato vissza. Teljesen biztos vagy benne?**`;
 
-        const embed = warningEmbed('Wipe All Data', warningMessage);
+        const embed = warningEmbed('Minden Adat Torlese', warningMessage);
 
         const confirmButtons = getConfirmationButtons('wipedata');
 

@@ -16,10 +16,10 @@ export default {
         if (!birthdayData) {
             const embed = new EmbedBuilder()
                 .setColor(0xFF0000)
-                .setTitle('No Birthday Found')
+                .setTitle('Nem talalhato szuletesnap')
                 .setDescription(targetUser.id === interaction.user.id 
-                    ? "You haven't set your birthday yet. Use `/birthday set` to add it!"
-                    : `${targetUser.username} hasn't set their birthday yet.`);
+                    ? "Meg nem allitottad be a szuletesnapodat. Hasznald a `/birthday set` parancsot a megadasahoz!"
+                    : `${targetUser.username} meg nem allitotta be a szuletesnapjat.`);
             return await InteractionHelper.safeEditReply(interaction, {
                 embeds: [embed]
             });
@@ -27,8 +27,8 @@ export default {
 
         const embed = new EmbedBuilder()
             .setColor(0x00FF00)
-            .setTitle('Birthday Information')
-            .setDescription(`**Date:** ${birthdayData.monthName} ${birthdayData.day}\n**User:** ${targetUser.toString()}`);
+            .setTitle('Szuletesnapi informacio')
+            .setDescription(`**Datum:** ${birthdayData.monthName} ${birthdayData.day}\n**Felhasznalo:** ${targetUser.toString()}`);
 
         await InteractionHelper.safeEditReply(interaction, {
             embeds: [embed]

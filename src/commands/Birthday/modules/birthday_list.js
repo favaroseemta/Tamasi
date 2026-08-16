@@ -15,8 +15,8 @@ export default {
         if (sortedBirthdays.length === 0) {
             const embed = new EmbedBuilder()
                 .setColor(0xFF0000)
-                .setTitle('No Birthdays')
-                .setDescription('No birthdays have been set in this server yet.');
+                .setTitle('Nincsenek szuletesnapok')
+                .setDescription('Ezen a szerveren meg nem allitottak be szuletesnapot.');
             return await InteractionHelper.safeEditReply(interaction, {
                 embeds: [embed]
             });
@@ -47,19 +47,19 @@ export default {
         if (displayIndex === 0) {
             const embed = new EmbedBuilder()
                 .setColor(0xFF0000)
-                .setTitle('No Birthdays')
-                .setDescription('No birthdays have been set by current server members.');
+                .setTitle('Nincsenek szuletesnapok')
+                .setDescription('A szerver jelenlegi tagjai meg nem allitottak be szuletesnapot.');
             return await InteractionHelper.safeEditReply(interaction, {
                 embeds: [embed]
             });
         }
 
-        birthdayList = `**${displayIndex} birthday${displayIndex !== 1 ? 's' : ''} in ${interaction.guild.name}**\n\n` + birthdayList;
+        birthdayList = `**${displayIndex} szuletesnap a(z) ${interaction.guild.name} szerveren**\n\n` + birthdayList;
 
         const embed = new EmbedBuilder()
             .setColor(0x00FF00)
-            .setTitle('Server Birthdays')
-            .setDescription(`${birthdayList}\n\nTotal: ${displayIndex} birthday${displayIndex !== 1 ? 's' : ''}`);
+            .setTitle('Szerveri szuletesnapok')
+            .setDescription(`${birthdayList}\n\nOsszesen: ${displayIndex} szuletesnap`);
 
         await InteractionHelper.safeEditReply(interaction, {
             embeds: [embed]

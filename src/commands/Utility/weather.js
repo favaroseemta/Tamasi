@@ -9,11 +9,11 @@ const WEATHER_URL = "https://api.open-meteo.com/v1/forecast";
 export default {
     data: new SlashCommandBuilder()
         .setName("weather")
-        .setDescription("Get real-time weather information for a location")
+        .setDescription("Valos ideju idojarasi informaciok lekerese egy helyszinrol")
         .addStringOption((option) =>
             option
                 .setName("city")
-                .setDescription("The city name, e.g., 'London' or 'Tokyo'")
+                .setDescription("A varos neve, pl. 'Budapest' vagy 'London'")
                 .setRequired(true),
         ),
 
@@ -41,7 +41,7 @@ export default {
                 city: city,
                 guildId: interaction.guildId
             });
-            await replyUserError(interaction, { type: ErrorTypes.USER_INPUT, message: `Could not find a location for **${city}**. Please check the spelling.` });
+            await replyUserError(interaction, { type: ErrorTypes.USER_INPUT, message: `Nem talalhato helyszin a kovetkezo kifejezesre: **${city}**. Kerlek ellenorizd a helyesirast.` });
             return;
         }
 
@@ -60,7 +60,7 @@ export default {
                 userId: interaction.user.id,
                 guildId: interaction.guildId
             });
-            await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'A weather service error occurred.' });
+            await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'Idojarasi szolgaltatas hiba tortent.' });
             return;
         }
 
@@ -72,26 +72,26 @@ export default {
 
         const condition = getWeatherDescription(weatherCode);
 
-        const embed = createEmbed({ title: `Weather in ${cityDisplay}, ${country}`, description: condition.description })
+        const embed = createEmbed({ title: `Idojaras itt: ${cityDisplay}, ${country}`, description: condition.description })
             .addFields(
                 {
-                    name: "Temperature",
+                    name: "Homerseklet",
                     value: `${temperature}°C`,
                     inline: true,
                 },
                 {
-                    name: "Humidity",
+                    name: "Paratartalom",
                     value: `${humidity}%`,
                     inline: true,
                 },
                 {
-                    name: "Wind Speed",
+                    name: "Szelsebesseg",
                     value: `${windSpeed} km/h`,
                     inline: true,
                 },
             )
             .setFooter({
-                text: `Latitude: ${latitude.toFixed(2)} | Longitude: ${longitude.toFixed(2)}`,
+                text: `Szelesseg: ${latitude.toFixed(2)} | Hosszusag: ${longitude.toFixed(2)}`,
             });
 
         await InteractionHelper.safeEditReply(interaction, { embeds: [embed] });
@@ -107,17 +107,17 @@ export default {
 
 function getWeatherDescription(code) {
     if (code >= 0 && code <= 3) {
-        return { description: "Clear sky / Partly cloudy", emoji: "" };
+        return { description: "Tiszta ido / Reszben felhos", emoji: "" };
     } else if (code >= 45 && code <= 48) {
-        return { description: "Fog and Rime fog", emoji: "" };
+        return { description: "Kod", emoji: "" };
     } else if (code >= 51 && code <= 67) {
-        return { description: "Drizzle or Rain", emoji: "" };
+        return { description: "Szitallas vagy eso", emoji: "" };
     } else if (code >= 71 && code <= 75) {
-        return { description: "Snow fall", emoji: "" };
+        return { description: "Havazas", emoji: "" };
     } else if (code >= 80 && code <= 86) {
-        return { description: "Showers (Rain/Snow)", emoji: "" };
+        return { description: "Zaporok (Eso/Ho)", emoji: "" };
     } else if (code >= 95 && code <= 99) {
-        return { description: "Thunderstorm", emoji: "" };
+        return { description: "Zivatar", emoji: "" };
     }
-    return { description: "Unknown conditions.", emoji: "" };
+    return { description: "Ismeretlen korulmenyek.", emoji: "" };
 }

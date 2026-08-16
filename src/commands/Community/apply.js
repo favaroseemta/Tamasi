@@ -21,10 +21,10 @@ import {
 function getApplicationStatusPresentation(statusValue) {
     const normalized = typeof statusValue === 'string' ? statusValue.trim().toLowerCase() : 'unknown';
     const statusLabel =
-        normalized === 'pending' ? 'In Progress' :
-        normalized === 'approved' ? 'Accepted' :
-        normalized === 'denied' ? 'Denied' :
-        'Unknown';
+        normalized === 'pending' ? 'Folyamatban' :
+        normalized === 'approved' ? 'Elfogadva' :
+        normalized === 'denied' ? 'Elutasitva' :
+        'Ismeretlen';
     const statusEmoji =
         normalized === 'pending' ? '🟡' :
         normalized === 'approved' ? '🟢' :
@@ -38,15 +38,15 @@ export default {
     slashOnly: true,
     data: new SlashCommandBuilder()
         .setName("apply")
-        .setDescription("Manage role applications")
+        .setDescription("Rang jelentkezesek kezelese")
         .addSubcommand((subcommand) =>
             subcommand
                 .setName("submit")
-                .setDescription("Submit an application for a role")
+                .setDescription("Jelentkezes benyujtasa egy rangra")
                 .addStringOption((option) =>
                     option
                         .setName("application")
-                        .setDescription("The application you want to submit")
+                        .setDescription("A benyujtando jelentkezes")
                         .setRequired(true)
                         .setAutocomplete(true),
                 ),
@@ -54,18 +54,18 @@ export default {
         .addSubcommand((subcommand) =>
             subcommand
                 .setName("status")
-                .setDescription("Check the status of your application")
+                .setDescription("A jelentkezesed statuszanak ellenorzese")
                 .addStringOption((option) =>
                     option
                         .setName("id")
-                        .setDescription("Application ID (leave empty to see all)")
+                        .setDescription("Jelentkezesi ID (hagyjad uresen az osszes megtekintesehez)")
                         .setRequired(false),
                 ),
         )
         .addSubcommand((subcommand) =>
             subcommand
                 .setName("list")
-                .setDescription("List available applications to apply for"),
+                .setDescription("Elerheto jelentkezesi opciok listazasa"),
         ),
 
     category: "Community",

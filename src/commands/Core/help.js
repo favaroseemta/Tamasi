@@ -60,8 +60,8 @@ export async function createInitialHelpMenu(client) {
 
     const options = [
         {
-            label: "📋 All Commands",
-            description: "Browse every available command in a single list",
+            label: "📋 Osszes parancs",
+            description: "Minden elerheto parancs bongeszese egyetlen listaban",
             value: ALL_COMMANDS_ID,
         },
         ...categoryDirs.map((category) => {
@@ -69,7 +69,7 @@ export async function createInitialHelpMenu(client) {
             const icon = CATEGORY_ICONS[categoryName] || "🔍";
             return {
                 label: `${icon} ${categoryName}`,
-                description: `View commands in the ${categoryName} category`,
+                description: `A(z) ${categoryName} kategoria parancsainak megtekintese`,
                 value: category,
             };
         }),
@@ -77,25 +77,26 @@ export async function createInitialHelpMenu(client) {
 
     const botName = client?.user?.username || "Bot";
     const embed = createEmbed({
-        title: `📖 ${botName} Help`,
-        description: 'Set up your server, pick what to enable, then browse commands below.',
+        title: `📖 ${botName} Sugo`,
+        description: 'Allitsd be a szervert, valasszd ki mit engedelyezel, majd bongeszd a parancsokat alabb.',
         color: 'primary',
         thumbnail: client.user?.displayAvatarURL?.({ size: 1024 }),
         fields: [
             {
-                name: '🚀 Getting Started',
+                name: '🚀 Kezdeti lepesek',
                 value: [
-                    '**1. Launch setup** — Run `/configwizard` to configure prefix, mod role, and logs.',
-                    '**2. Enable systems** — Use `/commands dashboard` to turn categories on or off.',                    '**3. Browse commands** — Use the menu below to view categories and commands.',
+                    '**1. Beallitas inditasa** — Futtasd a `/configwizard` parancsot a prefix, mod rang es naplok beallitasahoz.',
+                    '**2. Rendszerek engedelyezese** — Hasznald a `/commands dashboard` parancsot a kategoriak ki- es bekapcsolasahoz.',
+                    '**3. Parancsok bongeszese** — Hasznald az alabbi menut a kategoriak es parancsok megtekintesehez.',
                 ].join('\n'),
                 inline: false,
             },
             {
-                name: 'ℹ️ How It Works',
+                name: 'ℹ️ Hogyan mukodik',
                 value: [
-                    '• Dashboard commands manage each feature visually',
-                    '• Settings are saved per server',
-                    '• Slash commands and prefixes both work once enabled',
+                    '• A Dashboard parancsok vizualisan kezelik az egyes funkciokat',
+                    '• A beallitasok szerverenkent mentodnek',
+                    '• A Slash parancsok es prefixek is mukodnek, ha engedelyezve vannak',
                 ].join('\n'),
                 inline: false,
             },
@@ -108,23 +109,23 @@ export async function createInitialHelpMenu(client) {
     });
 
     embed.setFooter({ 
-        text: "Made with ❤️" 
+        text: "Keszult ❤️-vel" 
     });
     embed.setTimestamp();
 
     const bugReportButton = new ButtonBuilder()
         .setCustomId(BUG_REPORT_BUTTON_ID)
-        .setLabel("Report Bug")
+        .setLabel("Hiba jelentese")
         .setStyle(ButtonStyle.Danger);
 
     const supportButton = new ButtonBuilder()
-        .setLabel("Support Server")
+        .setLabel("Tamogatasi szerver")
         .setURL("https://discord.gg/QnWNz2dKCE")
         .setStyle(ButtonStyle.Link);
 
     const selectRow = createSelectMenu(
         CATEGORY_SELECT_ID,
-        "Select to view the commands",
+        "Valassz a parancsok megtekintesehez",
         options,
     );
 
@@ -143,7 +144,7 @@ export default {
     slashOnly: true,
     data: new SlashCommandBuilder()
         .setName("help")
-        .setDescription("Displays the help menu with all available commands"),
+        .setDescription("Megjeleniti a sugo menut az osszes elerheto parancsal"),
 
     async execute(interaction, guildConfig, client) {
         
@@ -164,8 +165,8 @@ export default {
                 }
 
                 const closedEmbed = createEmbed({
-                    title: "Help menu closed",
-                    description: "Help menu has been closed, use /help again.",
+                    title: "Sugo menu bezarva",
+                    description: "A sugo menu bezarult, hasznald ujra a /help parancsot.",
                     color: "secondary",
                 });
 

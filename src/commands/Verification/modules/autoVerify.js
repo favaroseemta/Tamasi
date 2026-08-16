@@ -17,32 +17,32 @@ const defaultAccountAgeDays = autoVerifyDefaults.defaultAccountAgeDays ?? 7;
 export default {
     data: new SlashCommandBuilder()
         .setName("autoverify")
-        .setDescription("Configure automatic verification settings")
+        .setDescription("Automatikus igazolasi beallitasok konfiguralasa")
         .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
         .addSubcommand(subcommand =>
             subcommand
                 .setName("setup")
-                .setDescription("Set up automatic verification")
+                .setDescription("Automatikus igazolas beallitasa")
                 .addRoleOption(option =>
                     option
                         .setName("role")
-                        .setDescription("Role to assign to users who meet auto-verify criteria")
+                        .setDescription("Rang az auto-verify felteteleknek megfelelo felhasznaloknak")
                         .setRequired(true)
                 )
                 .addStringOption(option =>
                     option
                         .setName("criteria")
-                        .setDescription("Criteria for automatic verification")
+                        .setDescription("Az automatikus igazolas feltetele")
                         .addChoices(
-                            { name: "Account Age", value: "account_age" },
-                            { name: "No Criteria", value: "none" }
+                            { name: "Fiok kora", value: "account_age" },
+                            { name: "Nincs feltetel", value: "none" }
                         )
                         .setRequired(true)
                 )
                 .addIntegerOption(option =>
                     option
                         .setName("account_age_days")
-                        .setDescription("Minimum account age in days (required for account age criteria)")
+                        .setDescription("Minimalis fiokkor napokban (szukseges a fiokkor feltetelhez)")
                         .setMinValue(minAccountAgeDays)
                         .setMaxValue(maxAccountAgeDays)
                         .setRequired(false)
@@ -51,7 +51,7 @@ export default {
         .addSubcommand(subcommand =>
             subcommand
                 .setName("dashboard")
-                .setDescription("Open the auto-verification dashboard for customization")
+                .setDescription("Az auto-igazolasi vezerlopult megnyitasa testreszabashoz")
         ),
 
     async execute(interaction, config, client) {
@@ -68,7 +68,7 @@ export default {
                     throw createError(
                         `Unknown subcommand: ${subcommand}`,
                         ErrorTypes.VALIDATION,
-                        "Invalid subcommand selected.",
+                        "Ervenytelen alparancsot valasztottal.",
                         { subcommand }
                     );
             }
@@ -95,7 +95,7 @@ async function handleSetup(interaction, guild, client) {
             throw createError(
                 'Auto-verify enable blocked by conflicting onboarding system',
                 ErrorTypes.CONFIGURATION,
-                'You cannot enable **AutoVerify** while the verification system or AutoRole is configured. Disable those first.',
+                'Nem engedelyezheted az **AutoVerify** rendszert, amig az igazolasi rendszer vagy az AutoRole be van allitva. Eloszor kapcsold ki azokat.',
                 {
                     guildId: guild.id,
                     verificationEnabled,
@@ -111,7 +111,7 @@ async function handleSetup(interaction, guild, client) {
             throw createError(
                 'Bot member not found in guild cache',
                 ErrorTypes.CONFIGURATION,
-                'I could not verify my permissions in this server. Please try again in a moment.',
+                'Nem tudtam ellenorizni a jogosultsagaimat ezen a szerveren. Kerlek probald ujra egy pillanat mulva.',
                 { guildId: guild.id }
             );
         }
@@ -120,7 +120,7 @@ async function handleSetup(interaction, guild, client) {
             throw createError(
                 'Missing ManageRoles permission',
                 ErrorTypes.PERMISSION,
-                "I need the 'Manage Roles' permission to assign auto-verify roles.",
+                "Szuksegem van a 'Rangok kezelese' jogosultsagra az auto-verify rangok kiosztasahoz.",
                 { guildId: guild.id }
             );
         }
@@ -129,7 +129,7 @@ async function handleSetup(interaction, guild, client) {
             throw createError(
                 'Invalid auto-verify role selected',
                 ErrorTypes.VALIDATION,
-                'Please choose a normal assignable role (not @everyone or an integration-managed role).',
+                'Kerlek egy normalis kioszthato rangot valassz (ne az @everyone-t vagy egy integracio altal kezelt rangot).',
                 { guildId: guild.id, roleId: targetRole.id, managed: targetRole.managed }
             );
         }
@@ -138,7 +138,7 @@ async function handleSetup(interaction, guild, client) {
             throw createError(
                 'Role hierarchy error for auto-verify setup',
                 ErrorTypes.PERMISSION,
-                'The selected auto-verify role must be below my highest role in the server role hierarchy.',
+                'A kivalasztott auto-verify rangnak a legmagasabb rangom alatt kell lennie a szerver rang-hierarchiajaban.',
                 { guildId: guild.id, roleId: targetRole.id, rolePosition: targetRole.position, botRolePosition: botMember.roles.highest.position }
             );
         }
@@ -162,10 +162,10 @@ async function handleSetup(interaction, guild, client) {
         let criteriaDescription = "";
         switch (criteria) {
             case "account_age":
-                criteriaDescription = `\`${accountAgeDays} days\` old`;
+                criteriaDescription = `\`${accountAgeDays} napos\` fiokkor`;
                 break;
             case "none":
-                criteriaDescription = "All users immediately";
+                criteriaDescription = "Minden felhasznalo azonnal";
                 break;
         }
 
@@ -178,8 +178,8 @@ async function handleSetup(interaction, guild, client) {
 
         await InteractionHelper.safeEditReply(interaction, {
             embeds: [successEmbed(
-                "Auto-Verification Configured",
-                `Automatic verification has been configured!\n\n**Role:** ${targetRole}\n**Criteria:** ${criteriaDescription}\n\nUsers who meet these criteria will receive this role when they join the server.`
+                "Auto-Igazolas Beallitva",
+                `Az automatikus igazolas sikeresen beallitva!\n\n**Rang:** ${targetRole}\n**Feltetel:** ${criteriaDescription}\n\nAzok a felhasznalok, akik megfelelnek ezeknek a felteteleknek, megkapjak ezt a rangot a szerverre valo csatlakozaskor.`
             )]
         });
 

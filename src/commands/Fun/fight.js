@@ -9,11 +9,11 @@ const EMBED_DESCRIPTION_LIMIT = 4096;
 export default {
     data: new SlashCommandBuilder()
     .setName("fight")
-    .setDescription("Starts a simulated 1v1 text-based battle.")
+    .setDescription("1v1 szimulalt harc inditasa.")
     .addUserOption((option) =>
       option
         .setName("opponent")
-        .setDescription("The user to fight.")
+        .setDescription("A felhasznalo akivel megkuzdesz.")
         .setRequired(true),
     ),
   category: 'Fun',
@@ -26,16 +26,16 @@ export default {
 
     if (challenger.id === opponent.id) {
       const embed = warningEmbed(
-        "⚔️ Invalid Challenge",
-        `**${challenger.username}**, you can't fight yourself! That's a draw before it even starts.`
+        "⚔️ Ervenytelen kihivas",
+        `**${challenger.username}**, nem kuzdhetsz sajat magad ellen! Azelott dontetlen lenne, mielott elkezdodne.`
       );
       return await InteractionHelper.safeEditReply(interaction, { embeds: [embed] });
     }
 
     if (opponent.bot) {
       const embed = warningEmbed(
-        "⚔️ Invalid Opponent",
-        "You can't fight bots! Challenge a real person instead."
+        "⚔️ Ervenytelen ellenfel",
+        "Nem kuzdhetsz botok ellen! Hivj ki egy valodi embert."
       );
       return await InteractionHelper.safeEditReply(interaction, { embeds: [embed] });
     }
@@ -47,25 +47,25 @@ export default {
 
     const log = [];
     log.push(
-      `💥 **${challenger.username}** challenges **${opponent.username}** to a duel! (Best of ${rounds} rounds)`,
+      `💥 **${challenger.username}** kihivta **${opponent.username}**-t egy parharcra! (${rounds} menetig tart)`,
     );
 
     for (let i = 1; i <= rounds; i++) {
       const attacker = rand(0, 1) === 0 ? challenger : opponent;
       const target = attacker.id === challenger.id ? opponent : challenger;
       const action = [
-        "throws a wild punch",
-        "lands a critical hit",
-        "uses a weak spell",
-        "parries and counterattacks",
+        "bevisz egy vad utest",
+        "kritikus talalatot er el",
+        "gyenge varazslatot vet be",
+        "harit es visszatamad",
       ][rand(0, 3)];
       log.push(
-        `\n**Round ${i}:** ${attacker.username} ${action} on ${target.username} for ${rand(1, damage)} damage!`,
+        `\n**${i}. menet:** ${attacker.username} ${action} ${target.username} ellen, ${rand(1, damage)} sebzest okozva!`,
       );
     }
 
     const outcomeText = log.join("\n");
-    const winnerText = `👑 **${winner.username}** has defeated ${loser.username} and claims the victory!`;
+    const winnerText = `👑 **${winner.username}** legyozte ${loser.username} felhasznalot es megnyerte a csatat!`;
     const fullDescription = `${outcomeText}\n\n${winnerText}`;
 
     const description = fullDescription.length <= EMBED_DESCRIPTION_LIMIT
@@ -73,7 +73,7 @@ export default {
       : `${fullDescription.slice(0, EMBED_DESCRIPTION_LIMIT - 15)}\n\n...`;
 
     const embed = successEmbed(
-      "🏆 Duel Complete!",
+      "🏆 Parharc vege!",
       description
     );
 

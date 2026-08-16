@@ -5,7 +5,7 @@ import { logger } from '../../utils/logger.js';
 export default {
     data: new SlashCommandBuilder()
         .setName("firstmsg")
-        .setDescription("Get a link to the first message in this channel")
+        .setDescription("Ugras a csatorna elso uzenetehez")
         .setDMPermission(false)
         .setDefaultMemberPermissions(PermissionFlagsBits.SendMessages),
     category: "Utility",
@@ -36,7 +36,7 @@ export default {
                 guildId: interaction.guildId
             });
             return await InteractionHelper.safeEditReply(interaction, {
-                embeds: [successEmbed('First Message', "No messages found in this channel!")],
+                embeds: [successEmbed('Elso uzenet', "Nem talalhato uzenet ebben a csatornaban!")],
             });
         }
 
@@ -45,8 +45,8 @@ export default {
         await InteractionHelper.safeEditReply(interaction, {
             embeds: [
                 successEmbed(
-                    "First Message in #" + interaction.channel.name,
-                    `Message Link: ${messageLink}`
+                    "Elso uzenet a(z) #" + interaction.channel.name + " csatornaban",
+                    `Uzenet link: ${messageLink}`
                 ),
             ],
         });

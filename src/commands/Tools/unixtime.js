@@ -6,7 +6,7 @@ import { InteractionHelper } from '../../utils/interactionHelper.js';
 export default {
     data: new SlashCommandBuilder()
         .setName('unixtime')
-        .setDescription('Get the current Unix timestamp'),
+        .setDescription('Jelenlegi Unix idobelyeg lekerese'),
 
     async execute(interaction) {
         await InteractionHelper.safeExecute(
@@ -16,11 +16,11 @@ export default {
                 const unixTimestamp = Math.floor(now.getTime() / 1000);
 
                 const embed = successEmbed(
-                    '⏱️ Current Unix Timestamp',
-                    `**Seconds since Unix Epoch:** \`${unixTimestamp}\`\n` +
-                    `**Milliseconds since Unix Epoch:** \`${now.getTime()}\`\n\n` +
-                    `**Human-readable (UTC):** ${now.toUTCString()}\n` +
-                    `**ISO String:** ${now.toISOString()}`
+                    '⏱️ Jelenlegi Unix Idobelyeg',
+                    `**Masodpercek a Unix Epoch ota:** \`${unixTimestamp}\`\n` +
+                    `**Milimasodpercek a Unix Epoch ota:** \`${now.getTime()}\`\n\n` +
+                    `**Emberi formatum (UTC):** ${now.toUTCString()}\n` +
+                    `**ISO Karakterlanc:** ${now.toISOString()}`
                 );
                 embed.setColor(getColor('success'));
 
@@ -28,7 +28,7 @@ export default {
                     embeds: [embed],
                 });
             },
-            'Failed to get unix timestamp. Please try again.',
+            'Nem sikerult lekerni a unix idobelyeget. Kerlek probald ujra.',
             {
                 autoDefer: true,
                 deferOptions: { flags: MessageFlags.Ephemeral }

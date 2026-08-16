@@ -8,22 +8,22 @@ import { InteractionHelper } from '../../utils/interactionHelper.js';
 export default {
     data: new SlashCommandBuilder()
         .setName('randomuser')
-        .setDescription('Select a random user from the server')
+        .setDescription('Veletlenszeru felhasznalo valasztasa a szerverrol')
         .addRoleOption(option =>
             option.setName('role')
-                .setDescription('Limit selection to users with this role')
+                .setDescription('Valasztas korlatozasa az ezzel a ranggal rendelkezo felhasznalokra')
                 .setRequired(false))
         .addBooleanOption(option =>
             option.setName('bots')
-                .setDescription('Include bots in the selection (default: false)')
+                .setDescription('Botok belevetele a valasztasba (alapertelmezett: hamis)')
                 .setRequired(false))
         .addBooleanOption(option =>
             option.setName('online')
-                .setDescription('Only select from online users (default: false)')
+                .setDescription('Csak online felhasznalokbol valasszon (alapertelmezett: hamis)')
                 .setRequired(false))
         .addBooleanOption(option =>
             option.setName('mention')
-                .setDescription('Mention the selected user (default: false)')
+                .setDescription('A kivalasztott felhasznalo megjelolese (alapertelmezett: hamis)')
                 .setRequired(false)),
 
     async execute(interaction) {
@@ -40,7 +40,7 @@ export default {
         if (!interaction.guild) {
             return replyUserError(interaction, {
                 type: ErrorTypes.VALIDATION,
-                message: 'This command can only be used in a server/guild.',
+                message: 'Ez a parancs csak szerveren hasznalhato.',
             });
         }
 
@@ -66,14 +66,14 @@ export default {
         }
 
         if (memberArray.length === 0) {
-            let errorMessage = 'Could not find any users matching your filters:';
-            if (role) errorMessage = `No users have the **${role.name}** role.`;
-            if (onlineOnly) errorMessage = 'No users are currently online.';
-            if (role && onlineOnly) errorMessage = `No **${role.name}** members are online.`;
+            let errorMessage = 'Nem talalhato a szuroknek megfelelo felhasznalo:';
+            if (role) errorMessage = `Egyetlen felhasznalo sem rendelkezik a(z) **${role.name}** ranggal.`;
+            if (onlineOnly) errorMessage = 'Egyetlen felhasznalo sem online jelenleg.';
+            if (role && onlineOnly) errorMessage = `Egyetlen **${role.name}** ranggal rendelkezo tag sem online.`;
 
             return replyUserError(interaction, {
                 type: ErrorTypes.USER_INPUT,
-                message: errorMessage + '\n\nTry adjusting your filters.',
+                message: errorMessage + '\n\nProbald megmodositani a szuroket.',
             });
         }
 
@@ -89,14 +89,14 @@ export default {
             .slice(0, 10);
 
         const embed = successEmbed(
-            '🎲 Random User Selected',
+            '🎲 Veletlenszeru Felhasznalo Kivalasztva',
             shouldMention ? `${selectedMember}` : `**${user.username}**`
         )
         .setThumbnail(user.displayAvatarURL({ dynamic: true, size: 256 }))
         .addFields(
-            { name: 'Username', value: user.username, inline: true },
-            { name: 'Bot', value: user.bot ? 'Yes' : 'No', inline: true },
-            { name: `Roles (${roles.length})`, value: roles.length > 0 ? roles.slice(0, 5).join('') + (roles.length > 5 ? `+${roles.length - 5} more` : '') : 'No roles', inline: false }
+            { name: 'Felhasznalonev', value: user.username, inline: true },
+            { name: 'Bot', value: user.bot ? 'Igen' : 'Nem', inline: true },
+            { name: `Rangok (${roles.length})`, value: roles.length > 0 ? roles.slice(0, 5).join('') + (roles.length > 5 ? `+meg ${roles.length - 5}` : '') : 'Nincsenek rangok', inline: false }
         )
         .setColor('primary');
 
@@ -104,12 +104,12 @@ export default {
             .addComponents(
                 new ButtonBuilder()
                     .setCustomId(`randomuser_${interaction.user.id}_again`)
-                    .setLabel('🎲 Pick Another User')
+                    .setLabel('🎲 Masik Felhasznalo Valasztasa')
                     .setStyle(ButtonStyle.Primary)
             );
 
         const response = await interaction.editReply({
-            content: shouldMention ? `${selectedMember}, you've been chosen!` : null,
+            content: shouldMention ? `${selectedMember}, te lettel kivalasztva!` : null,
             embeds: [embed],
             components: [row],
             allowedMentions: { users: shouldMention ? [user.id] : [] }
@@ -139,7 +139,7 @@ export default {
                 if (newMemberArray.length === 0) {
                     await replyUserError(i, {
                         type: ErrorTypes.USER_INPUT,
-                        message: 'No users found matching the criteria.',
+                        message: 'Nem talalhato a felteteleknek megfelelo felhasznalo.',
                     });
                     return;
                 }
@@ -155,19 +155,19 @@ export default {
                     .slice(0, 10);
 
                 const newEmbed = successEmbed(
-                    '🎲 Random User Selected',
+                    '🎲 Veletlenszeru Felhasznalo Kivalasztva',
                     shouldMention ? `${newSelectedMember}` : `**${newUser.username}**`
                 )
                 .setThumbnail(newUser.displayAvatarURL({ dynamic: true, size: 256 }))
                 .addFields(
-                    { name: 'Username', value: newUser.username, inline: true },
-                    { name: 'Bot', value: newUser.bot ? 'Yes' : 'No', inline: true },
-                    { name: `Roles (${newRoles.length})`, value: newRoles.length > 0 ? newRoles.slice(0, 5).join('') + (newRoles.length > 5 ? `+${newRoles.length - 5} more` : '') : 'No roles', inline: false }
+                    { name: 'Felhasznalonev', value: newUser.username, inline: true },
+                    { name: 'Bot', value: newUser.bot ? 'Igen' : 'Nem', inline: true },
+                    { name: `Rangok (${newRoles.length})`, value: newRoles.length > 0 ? newRoles.slice(0, 5).join('') + (newRoles.length > 5 ? `+meg ${newRoles.length - 5}` : '') : 'Nincsenek rangok', inline: false }
                 )
                 .setColor(newSelectedMember.displayHexColor || '#3498db');
 
                 await i.update({
-                    content: shouldMention ? `${newSelectedMember}, you've been chosen!` : null,
+                    content: shouldMention ? `${newSelectedMember}, te lettel kivalasztva!` : null,
                     embeds: [newEmbed],
                     components: [row],
                     allowedMentions: { users: shouldMention ? [newUser.id] : [] }
@@ -176,7 +176,7 @@ export default {
             } catch (error) {
                 logger.error('Button interaction error:', error);
                 await i.reply({
-                    content: 'An error occurred while selecting another user.',
+                    content: 'Hiba tortent egy masik felhasznalo kivalasztasa kozben.',
                     flags: ['Ephemeral']
                 });
             }

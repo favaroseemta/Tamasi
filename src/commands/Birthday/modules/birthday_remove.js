@@ -14,8 +14,8 @@ export default {
         if (result.status === 'not_found') {
             const embed = new EmbedBuilder()
                 .setColor(0xFF0000)
-                .setTitle('No Birthday Found')
-                .setDescription('You don\'t have a birthday set to remove.');
+                .setTitle('Nem talalhato szuletesnap')
+                .setDescription('Nincs eltavolithato szuletesnapod.');
             await InteractionHelper.safeEditReply(interaction, {
                 embeds: [embed]
             });
@@ -24,8 +24,8 @@ export default {
 
         const embed = new EmbedBuilder()
             .setColor(0x00FF00)
-            .setTitle('Birthday Removed')
-            .setDescription('Your birthday has been successfully removed from the server.');
+            .setTitle('Szuletesnap eltavolitva')
+            .setDescription('A szuletesnapod sikeresen eltavolitva a szerverrol.');
         await InteractionHelper.safeEditReply(interaction, {
             embeds: [embed]
         });

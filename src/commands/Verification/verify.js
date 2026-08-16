@@ -7,7 +7,7 @@ import { InteractionHelper } from '../../utils/interactionHelper.js';
 export default {
     data: new SlashCommandBuilder()
         .setName('verify')
-        .setDescription('Verify yourself and gain access to the server'),
+        .setDescription('Igazold magad es nyerj hozzaferest a szerverhez'),
 
     async execute(interaction, config, client) {
         const guild = interaction.guild;
@@ -19,15 +19,15 @@ export default {
 
         if (result.status === 'already_verified') {
             return await InteractionHelper.safeReply(interaction, {
-                embeds: [infoEmbed('Already Verified', "You are already verified.")],
+                embeds: [infoEmbed('Mar Igazolva', "Mar igazoltad magad.")],
                 flags: MessageFlags.Ephemeral
             });
         }
 
         await InteractionHelper.safeReply(interaction, {
             embeds: [successEmbed(
-                "Verification Complete",
-                `You have been verified and given the **${result.roleName}** role! Welcome to the server! 🎉`
+                "Igazolas Kesz",
+                `Sikeresen igazoltad magad es megkaptad a **${result.roleName}** rangot! Udvozlunk a szerveren! 🎉`
             )],
             flags: MessageFlags.Ephemeral
         });

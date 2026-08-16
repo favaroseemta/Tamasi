@@ -8,32 +8,32 @@ import searchUrban from './modules/search_urban.js';
 export default {
     data: new SlashCommandBuilder()
         .setName('search')
-        .setDescription('Search the web and dictionaries')
+        .setDescription('Kereses a weben es szotarakban')
         .addSubcommand(subcommand =>
             subcommand
                 .setName('define')
-                .setDescription('Look up a word definition')
+                .setDescription('Szo jelentesenek keresese')
                 .addStringOption(option =>
                     option.setName('word')
-                        .setDescription('The word to look up')
+                        .setDescription('A keresendo szo')
                         .setRequired(true))
         )
         .addSubcommand(subcommand =>
             subcommand
                 .setName('google')
-                .setDescription('Search Google')
+                .setDescription('Kereses a Google-on')
                 .addStringOption(option =>
                     option.setName('query')
-                        .setDescription('What would you like to search for?')
+                        .setDescription('Mit szeretnel keresni?')
                         .setRequired(true))
         )
         .addSubcommand(subcommand =>
             subcommand
                 .setName('urban')
-                .setDescription('Search Urban Dictionary for definitions')
+                .setDescription('Kereses az Urban Dictionary szotarban')
                 .addStringOption(option =>
                     option.setName('term')
-                        .setDescription('The term to look up on Urban Dictionary')
+                        .setDescription('A keresendo kifejezes az Urban Dictionary-ben')
                         .setRequired(true))
         ),
 

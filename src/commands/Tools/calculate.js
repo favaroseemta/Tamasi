@@ -19,12 +19,12 @@ export { calculationContexts };
 export default {
     data: new SlashCommandBuilder()
         .setName("calculate")
-        .setDescription("Evaluate a mathematical expression")
+        .setDescription("Matematikai kifejezes kiszamitasa")
         .addStringOption((option) =>
             option
                 .setName("expression")
                 .setDescription(
-                    "The mathematical expression to evaluate (e.g., 2+2*3, sin(45 deg), 16^0.5)",
+                    "A kiszamitando matematikai kifejezes (pl. 2+2*3, sin(45 deg), 16^0.5)",
                 )
                 .setRequired(true),
         ),
@@ -47,9 +47,9 @@ export default {
         ) {
             return await replyUserError(interaction, {
                 type: ErrorTypes.VALIDATION,
-                message: '**Contains unsupported characters.**\n\n' +
-                    '✅ Supported: Numbers, decimals, + - * / ^ %, sin cos tan sqrt abs log exp, pi e, ()\n' +
-                    '❌ Not supported: Brackets, curly braces, and other symbols'
+                message: '**Nem tamogatott karaktereket tartalmaz.**\n\n' +
+                    '✅ Tamogatott: Szamok, tizedesjegyek, + - * / ^ %, sin cos tan sqrt abs log exp, pi e, ()\n' +
+                    '❌ Nem tamogatott: Szogletes zarojelek, kapcsos zarojelek es egyeb szimbolumok'
             });
         }
 
@@ -66,9 +66,9 @@ export default {
             if (pattern.test(expression)) {
                 return await replyUserError(interaction, {
                     type: ErrorTypes.VALIDATION,
-                    message: '**Contains blocked code patterns.**\n\n' +
-                        '🚫 **Blocked:** import, require, eval, Function, setTimeout, setInterval, process, fs, document, window, fetch, loops, async/await\n\n' +
-                        'Code-like syntax is not allowed in calculations.'
+                    message: '**Tiltott kodmintakat tartalmaz.**\n\n' +
+                        '🚫 **Tiltott:** import, require, eval, Function, setTimeout, setInterval, process, fs, document, window, fetch, ciklusok, async/await\n\n' +
+                        'Kod-szeru szintaxis nem engedelyezett a szamitasokban.'
                 });
             }
         }
@@ -92,7 +92,7 @@ export default {
             } else if (typeof result === "boolean") {
                 formattedResult = result ? "true" : "false";
             } else if (result === null || result === undefined) {
-                formattedResult = "No result";
+                formattedResult = "Nincs eredmeny";
             } else if (
                 Array.isArray(result) ||
                 typeof result === "object"
@@ -138,15 +138,15 @@ export default {
                     .setStyle(ButtonStyle.Primary),
                 new ButtonBuilder()
                     .setCustomId(`calc_${interaction.id}_history`)
-                    .setLabel("History")
+                    .setLabel("Elozmenyek")
                     .setStyle(ButtonStyle.Secondary),
             );
 
             const embed = successEmbed(
-                "🧮 Calculation Result",
-                `**Expression:** \`${expression.replace(/`/g, "\`")}\`\n` +
-                    `**Result:** \`${formattedResult}\`\n\n` +
-                    `*Use the buttons below to perform operations with the result.*`,
+                "🧮 Szamitas Eredmenye",
+                `**Kifejezes:** \`${expression.replace(/`/g, "\`")}\`\n` +
+                    `**Eredmeny:** \`${formattedResult}\`\n\n` +
+                    `*Hasznald az alabbi gombokat a muveletek elvegzesehez az eredmennyel.*`,
             );
 
             await InteractionHelper.safeEditReply(interaction, {
@@ -178,7 +178,7 @@ export default {
 
                         if (userHistory.length === 0) {
                             await i.followUp({
-                                content: "No calculation history found.",
+                                content: "Nem talalhato szamitasi elozmeny.",
                                 flags: ["Ephemeral"],
                             });
                             return;
@@ -193,7 +193,7 @@ export default {
                             .join("\n\n");
 
                         await i.followUp({
-                            content: `📜 **Your Calculation History**\n\n${historyText}`,
+                            content: `📜 **A szamitasi elozmenyeid**\n\n${historyText}`,
                             flags: ["Ephemeral"],
                         });
                         return;
@@ -229,7 +229,7 @@ export default {
 
                         await i.showModal({
                             customId: `calc_modal:${operation}`,
-                            title: `Enter a number to ${operation}`,
+                            title: `Adj meg egy szamot a muvelethez`,
                             components: [
                                 {
                                     type: 1,
@@ -237,8 +237,8 @@ export default {
                                         {
                                             type: 4,
                                             customId: `operand:${contextKey}`,
-                                            label: `Number to ${operator} with ${formattedResult}`,
-                                            placeholder: "Enter a number...",
+                                            label: `Szam a(z) ${operator} muvelethez: ${formattedResult}`,
+                                            placeholder: "Adj meg egy szamot...",
                                             style: 1,
                                             required: true,
                                             maxLength: 50,
@@ -251,7 +251,7 @@ export default {
                         logger.error("Failed to show modal:", modalError);
                         if (!i.replied && !i.deferred) {
                             await i.reply({
-                                content: "Failed to open calculator. Please try again.",
+                                content: "Nem sikerult megnyitni a szamologepet. Kerlek probald ujra.",
                                 flags: ["Ephemeral"],
                             }).catch(console.error);
                         }
@@ -262,7 +262,7 @@ export default {
                     logger.error("Button interaction error:", error);
                     if (!i.deferred && !i.replied) {
                         await i.followUp({
-                            content: "An error occurred while processing your request.",
+                            content: "Hiba tortent a keres feldolgozasa kozben.",
                             flags: ["Ephemeral"],
                         }).catch(console.error);
                     }
@@ -277,7 +277,7 @@ export default {
                                 .setCustomId(
                                     `calc_${interaction.id}_expired`,
                                 )
-                                .setLabel("Calculator Expired")
+                                .setLabel("A szamologep lejarott")
                                 .setStyle(ButtonStyle.Secondary)
                                 .setDisabled(true),
                         );
@@ -286,7 +286,7 @@ export default {
                         .editReply({
                             components: [disabledRow],
                             content:
-                                "⏱️ This calculator has expired. Use the command again to perform more calculations.",
+                                "⏱️ Ez a szamologep lejarott. Hasznald ujra a parancsot a szamitasokhoz.",
                         })
                         .catch(console.error);
                 } else {
@@ -306,24 +306,24 @@ export default {
         } catch (error) {
             logger.error('Calculation error:', error);
 
-            let errorMessage = 'Failed to evaluate the expression.';
+            let errorMessage = 'Nem sikerult kiszamitani a kifejezest.';
 
             if (error.message.includes('Unexpected type')) {
                 errorMessage +=
-                    'The expression contains an unsupported operation or function.';
+                    'A kifejezes nem tamogatott muveletet vagy fuggvenyt tartalmaz.';
             } else if (error.message.includes('Undefined symbol')) {
                 errorMessage +=
-                    'The expression contains an undefined variable or function.';
+                    'A kifejezes nem definialt valtozot vagy fuggvenyt tartalmaz.';
             } else if (error.message.includes('Brackets not balanced')) {
-                errorMessage += 'The expression has unbalanced brackets.';
+                errorMessage += 'A kifejezesben a zarojelek nincsenek parban.';
             } else if (
                 error.message.includes('Unexpected operator') ||
                 error.message.includes('Unexpected character')
             ) {
                 errorMessage +=
-                    'The expression contains an invalid operator or character.';
+                    'A kifejezes ervenytelen operatort vagy karaktert tartalmaz.';
             } else {
-                errorMessage += 'Please check the syntax and try again.';
+                errorMessage += 'Kerlek ellenorizd a szintaxist es probald ujra.';
             }
 
             await replyUserError(interaction, {
