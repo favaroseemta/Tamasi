@@ -8,10 +8,10 @@ import { replyUserError, ErrorTypes } from '../../utils/errorHandler.js';
 export default {
     data: new SlashCommandBuilder()
         .setName('hexcolor')
-        .setDescription('Veletlenszeru hex szinkod generalasa elonezettel')
+        .setDescription('Generate a random hex color with preview')
         .addStringOption(option =>
             option.setName('color')
-                .setDescription('Meghatarozott hex szinkod (pl. #FF5733 vagy FF5733)')
+                .setDescription('Specific hex color (e.g., #FF5733 or FF5733)')
                 .setRequired(false)),
 
     async execute(interaction) {
@@ -27,7 +27,7 @@ export default {
                 } else {
                     hexColor = hexColor.replace('#', '');
                     if (!/^[0-9A-Fa-f]{3,6}$/.test(hexColor)) {
-                        return await replyUserError(interaction, { type: ErrorTypes.VALIDATION, message: 'Kerlek adj meg egy ervenyes hex kodot.\n\n**Ervenyes formatumok:**\n• `#FF5733` (kettoskereszttel)\n• `FF5733` (kettoskereszt nelkul)\n• `F57` (3 jegyu roviditett)\n\n**Ervenytelen:** `#GG5733` (a G nem hex szamjegy)' });
+                        return await replyUserError(interaction, { type: ErrorTypes.VALIDATION, message: 'Please provide a valid hex code.\n\n**Valid formats:**\n• `#FF5733` (with hash)\n• `FF5733` (without hash)\n• `F57` (3-digit shorthand)\n\n**Invalid:** `#GG5733` (G is not a hex digit)' });
                     }
 
                     if (hexColor.length === 3) {
@@ -49,22 +49,22 @@ export default {
                 const colorName = getColorName(hexColor);
 
                 const embed = successEmbed(
-                    '🎨 Szin Informacio',
+                    '🎨 Color Information',
                     `**Hex:** \`${hexColor}\`\n` +
                     `**RGB:** \`rgb(${r}, ${g}, ${b})\`\n` +
                     `**HSL:** \`${rgbToHsl(r, g, b)}\`\n` +
-                    `**Nev:** ${colorName || 'Egyedi Szin'}`
+                    `**Name:** ${colorName || 'Custom Color'}`
                 )
                     .setColor(hexColor)
                     .setImage(colorPreviewUrl);
 
                 if (isRandom) {
-                    embed.setFooter({ text: 'Veletlenszeruen generalt szin' });
+                    embed.setFooter({ text: 'Randomly generated color' });
                 }
 
                 await InteractionHelper.safeEditReply(interaction, { embeds: [embed] });
             },
-            'Nem sikerult generalni a szin informaciokat. Kerlek probald ujra.',
+            'Failed to generate color information. Please try again.',
             {
                 autoDefer: true,
                 deferOptions: { flags: MessageFlags.Ephemeral }

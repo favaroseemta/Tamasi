@@ -22,12 +22,12 @@ export default {
         const reportChannelId = resolveLogChannel(guildConfig, 'reports');
 
         if (!reportChannelId) {
-            return await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'A jelentesi csatorna meg nincs beallitva. Kerj meg egy moderatort a `/logging dashboard` vagy `/logging channel` parancs hasznalatara.' });
+            return await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'The report channel has not been set up. Ask a moderator to use `/logging dashboard` or `/logging channel`.' });
         }
 
         const ownerMention = interaction.guild.ownerId
-            ? `<@${interaction.guild.ownerId}> Uj jelentes!`
-            : 'Uj jelentes!';
+            ? `<@${interaction.guild.ownerId}> New report!`
+            : 'New report!';
 
         await logEvent({
             client,
@@ -35,13 +35,13 @@ export default {
             eventType: EVENT_TYPES.REPORT_FILE,
             content: ownerMention,
             data: {
-                title: 'Felhasznaloi Jelentes',
+                title: 'User Report',
                 lines: [
-                    formatLogLine('Jelentett Felhasznalo', `${targetUser.tag} (\`${targetUser.id}\`)`),
-                    formatLogLine('Jelentette', `${interaction.user.tag} (\`${interaction.user.id}\`)`),
-                    formatLogLine('Csatorna', interaction.channel.toString()),
+                    formatLogLine('Reported User', `${targetUser.tag} (\`${targetUser.id}\`)`),
+                    formatLogLine('Reported By', `${interaction.user.tag} (\`${interaction.user.id}\`)`),
+                    formatLogLine('Channel', interaction.channel.toString()),
                 ],
-                blockFields: [{ name: 'Indok', value: reason }],
+                blockFields: [{ name: 'Reason', value: reason }],
                 author: await resolveUserAuthor(client, targetUser.id),
                 thumbnail: targetUser.displayAvatarURL(),
             },
@@ -49,8 +49,8 @@ export default {
 
         await InteractionHelper.safeEditReply(interaction, {
             embeds: [createEmbed({
-                title: 'Jelentes Elkuldve',
-                description: `A(z) **${targetUser.tag}** elleni jelentesed sikeresen elkuldve es tovabbitva a moderacios csapatnak. Koszonjuk!`,
+                title: 'Report Submitted',
+                description: `Your report against **${targetUser.tag}** has been successfully filed and sent to the moderation team. Thank you!`,
             })],
         });
 

@@ -13,119 +13,119 @@ function generateShareId() {
 export default {
     data: new SlashCommandBuilder()
         .setName("todo")
-        .setDescription("Sajat teendo lista kezelese")
+        .setDescription("Manage your personal to-do list")
         .addSubcommand(subcommand =>
             subcommand
                 .setName("add")
-                .setDescription("Teendo hozzaadasa a listahoz")
+                .setDescription("Add a task to your to-do list")
                 .addStringOption(option =>
                     option
                         .setName("task")
-                        .setDescription("A hozzaadando teendo")
+                        .setDescription("The task to add")
                         .setRequired(true)
                 )
         )
         .addSubcommand(subcommand =>
             subcommand
                 .setName("list")
-                .setDescription("Teendo lista megtekintese")
+                .setDescription("View your to-do list")
         )
         .addSubcommand(subcommand =>
             subcommand
                 .setName("complete")
-                .setDescription("Teendo megjelolese keszkent")
+                .setDescription("Mark a task as complete")
                 .addIntegerOption(option =>
                     option
                         .setName("number")
-                        .setDescription("A keszre allitando teendo szama")
+                        .setDescription("The number of the task to complete")
                         .setRequired(true)
                 )
         )
         .addSubcommand(subcommand =>
             subcommand
                 .setName("remove")
-                .setDescription("Teendo eltavolitasa a listabol")
+                .setDescription("Remove a task from your to-do list")
                 .addIntegerOption(option =>
                     option
                         .setName("number")
-                        .setDescription("Az eltavolitando teendo szama")
+                        .setDescription("The number of the task to remove")
                         .setRequired(true)
                 )
         )
         .addSubcommandGroup(group => 
             group
                 .setName("share")
-                .setDescription("Megosztott teendo listak kezelese")
+                .setDescription("Manage shared to-do lists")
                 .addSubcommand(subcommand =>
                     subcommand
                         .setName("create")
-                        .setDescription("Uj megosztott teendo lista letrehozasa")
+                        .setDescription("Create a new shared to-do list")
                         .addStringOption(option =>
                             option
                                 .setName("name")
-                                .setDescription("A megosztott lista neve")
+                                .setDescription("Name for the shared list")
                                 .setRequired(true)
                         )
                 )
                 .addSubcommand(subcommand =>
                     subcommand
                         .setName("add")
-                        .setDescription("Tag hozzaadasa a megosztott listahoz")
+                        .setDescription("Add a member to a shared list")
                         .addStringOption(option =>
                             option
                                 .setName("list_id")
-                                .setDescription("A megosztott lista ID-ja")
+                                .setDescription("ID of the shared list")
                                 .setRequired(true)
                         )
                         .addUserOption(option =>
                             option
                                 .setName("user")
-                                .setDescription("Hozzaadando felhasznalo")
+                                .setDescription("User to add to the list")
                                 .setRequired(true)
                         )
                 )
                 .addSubcommand(subcommand =>
                     subcommand
                         .setName("view")
-                        .setDescription("Megosztott teendo lista megtekintese")
+                        .setDescription("View a shared to-do list")
                         .addStringOption(option =>
                             option
                                 .setName("list_id")
-                                .setDescription("A megosztott lista ID-ja")
+                                .setDescription("ID of the shared list")
                                 .setRequired(true)
                         )
                 )
                 .addSubcommand(subcommand =>
                     subcommand
                         .setName("addtask")
-                        .setDescription("Teendo hozzaadasa a megosztott listahoz")
+                        .setDescription("Add a task to a shared to-do list")
                         .addStringOption(option =>
                             option
                                 .setName("list_id")
-                                .setDescription("A megosztott lista ID-ja")
+                                .setDescription("ID of the shared list")
                                 .setRequired(true)
                         )
                         .addStringOption(option =>
                             option
                                 .setName("task")
-                                .setDescription("A hozzaadando teendo")
+                                .setDescription("The task to add")
                                 .setRequired(true)
                         )
                 )
                 .addSubcommand(subcommand =>
                     subcommand
                         .setName("remove")
-                        .setDescription("Teendo eltavolitasa a megosztott listabol")
+                        .setDescription("Remove a task from a shared to-do list")
                         .addStringOption(option =>
                             option
                                 .setName("list_id")
-                                .setDescription("A megosztott lista ID-ja")
+                                .setDescription("ID of the shared list")
                                 .setRequired(true)
                         )
                         .addIntegerOption(option =>
                             option
                                 .setName("number")
-                                .setDescription("Az eltavolitando teendo szama")
+                                .setDescription("The number of the task to remove")
                                 .setRequired(true)
                         )
                 )
@@ -197,9 +197,9 @@ export default {
                     return await InteractionHelper.safeEditReply(interaction, {
                         embeds: [
                             successEmbed(
-                                "Megosztott Lista Letrehozva",
-                                `Letrehozva a(z) "${listName}" megosztott lista ezzel az ID-val: \`${listId}\`\n` +
-                                `Hasznald a \`/todo share add list_id:${listId} user:@username\` parancsot tagok hozzaadasahoz.`
+                                "Shared List Created",
+                                `Created shared list "${listName}" with ID: \`${listId}\`\n` +
+                                `Use \`/todo share add list_id:${listId} user:@username\` to add members.`
                             )
                         ]
                     });
@@ -211,11 +211,11 @@ export default {
 
                     const listData = await getOrCreateSharedList(listId);
                     if (!listData) {
-                        return await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'Megosztott lista nem talalhato.' });
+                        return await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'Shared list not found.' });
                     }
 
                     if (listData.creatorId !== userId) {
-                        return await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'Csak a lista letrehozoja adhat hozza tagokat.' });
+                        return await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'Only the list creator can add members.' });
                     }
 
                     if (!listData.members.includes(memberToAdd.id)) {
@@ -231,13 +231,13 @@ export default {
 
                         return await InteractionHelper.safeEditReply(interaction, {
                             embeds: [
-                                successEmbed('Tag Hozzaadva', 
-                                    `${memberToAdd.username} hozzaadva a(z) "${listData.name}" megosztott listahoz`
+                                successEmbed('Member Added', 
+                                    `Added ${memberToAdd.username} to the shared list "${listData.name}"`
                                 )
                             ]
                         });
                     } else {
-                        return await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'A felhasznalo mar tagja ennek a listanak.' });
+                        return await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'User is already a member of this list.' });
                     }
                 }
 
@@ -246,11 +246,11 @@ export default {
                     const listData = await getOrCreateSharedList(listId);
 
                     if (!listData) {
-                        return await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'Megosztott lista nem talalhato.' });
+                        return await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'Shared list not found.' });
                     }
 
                     if (!listData.members.includes(userId)) {
-                        return await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'Nincs hozzaferesed ehhez a listahoz.' });
+                        return await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'You don\'t have access to this list.' });
                     }
 
                     if (listData.tasks.length === 0) {
@@ -266,25 +266,25 @@ export default {
                                 embeds: [
                                     successEmbed(
                                         `📋 **${listData.name}**\n\n` +
-                                        `👑 **Tulajdonos:** ${ownerName}\n` +
-                                        `👥 **Tagok:** ${memberList}\n\n` +
-                                        `*Ez a lista jelenleg ures. Hasznald a "Teendo hozzaadasa" gombot teendok hozzaadasahoz!*`,
-                                        `Megosztott Lista (ID: \`${listId}\`)`
+                                        `👑 **Owner:** ${ownerName}\n` +
+                                        `👥 **Members:** ${memberList}\n\n` +
+                                        `*This list is currently empty. Use the "Add Task" button to add tasks!*`,
+                                        `Shared List (ID: \`${listId}\`)`
                                     )
                                 ],
                                 components: [
                                     new ActionRowBuilder().addComponents(
                                         new ButtonBuilder()
                                             .setCustomId(`shared_todo_add_${listId}`)
-                                            .setLabel('Teendo hozzaadasa')
+                                            .setLabel('Add Task')
                                             .setStyle(ButtonStyle.Primary),
                                         new ButtonBuilder()
                                             .setCustomId(`shared_todo_complete_${listId}`)
-                                            .setLabel('Teendo kesz')
+                                            .setLabel('Complete Task')
                                             .setStyle(ButtonStyle.Success),
                                         new ButtonBuilder()
                                             .setCustomId(`shared_todo_remove_${listId}`)
-                                            .setLabel('Teendo eltavolitasa')
+                                            .setLabel('Remove Task')
                                             .setStyle(ButtonStyle.Danger)
                                     )
                                 ]
@@ -295,7 +295,7 @@ export default {
                         .map(task => 
                             `${task.completed ? '✅' : '📝'} #${task.id} ${task.text}` +
                             `\`[${new Date(task.createdAt).toLocaleDateString()}]` +
-                            (task.completed ? `• Keszre allitotta: ${task.completedBy}` : '') + '`'
+                            (task.completed ? `• Completed by ${task.completedBy}` : '') + '`'
                         )
                         .join('\n');
 
@@ -308,27 +308,27 @@ export default {
                     const ownerName = owner ? owner.user.username : `<@${listData.creatorId}>`;
 
                     const fullListDisplay = `📋 **${listData.name}**\n\n` +
-                        `👑 **Tulajdonos:** ${ownerName}\n` +
-                        `👥 **Tagok:** ${memberList}\n\n` +
-                        `**Teendok:**\n${taskList}`;
+                        `👑 **Owner:** ${ownerName}\n` +
+                        `👥 **Members:** ${memberList}\n\n` +
+                        `**Tasks:**\n${taskList}`;
 
                     return await InteractionHelper.safeEditReply(interaction, {
                         embeds: [
-                            successEmbed(`Megosztott Lista (ID: \`${listId}\`)`, fullListDisplay)
+                            successEmbed(`Shared List (ID: \`${listId}\`)`, fullListDisplay)
                         ],
                         components: [
                             new ActionRowBuilder().addComponents(
                                 new ButtonBuilder()
                                     .setCustomId(`shared_todo_add_${listId}`)
-                                    .setLabel('Teendo hozzaadasa')
+                                    .setLabel('Add Task')
                                     .setStyle(ButtonStyle.Primary),
                                 new ButtonBuilder()
                                     .setCustomId(`shared_todo_complete_${listId}`)
-                                    .setLabel('Teendo kesz')
+                                    .setLabel('Complete Task')
                                     .setStyle(ButtonStyle.Success),
                                 new ButtonBuilder()
                                     .setCustomId(`shared_todo_remove_${listId}`)
-                                    .setLabel('Teendo eltavolitasa')
+                                    .setLabel('Remove Task')
                                     .setStyle(ButtonStyle.Danger)
                             )
                         ]
@@ -342,11 +342,11 @@ export default {
                     const listData = await getOrCreateSharedList(listId);
 
                     if (!listData) {
-                        return await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'Megosztott lista nem talalhato.' });
+                        return await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'Shared list not found.' });
                     }
 
                     if (!listData.members.includes(userId)) {
-                        return await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'Nincs hozzaferesed ehhez a listahoz.' });
+                        return await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'You don\'t have access to this list.' });
                     }
 
                     const newTask = {
@@ -362,7 +362,7 @@ export default {
 
                     return await InteractionHelper.safeEditReply(interaction, {
                         embeds: [
-                            successEmbed('Teendo Hozzaadva', `A(z) "${taskText}" felvetve a(z) "${listData.name}" megosztott listara.`)
+                            successEmbed('Task Added', `Added "${taskText}" to the shared list "${listData.name}"`)
                         ]
                     });
                 }
@@ -374,16 +374,16 @@ export default {
                     const listData = await getOrCreateSharedList(listId);
 
                     if (!listData) {
-                        return await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'Megosztott lista nem talalhato.' });
+                        return await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'Shared list not found.' });
                     }
 
                     if (!listData.members.includes(userId)) {
-                        return await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'Nincs hozzaferesed ehhez a listahoz.' });
+                        return await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'You don\'t have access to this list.' });
                     }
 
                     const taskIndex = listData.tasks.findIndex(task => task.id === taskNumber);
                     if (taskIndex === -1) {
-                        return await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'Teendo nem talalhato.' });
+                        return await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'Task not found.' });
                     }
 
                     const [removedTask] = listData.tasks.splice(taskIndex, 1);
@@ -391,7 +391,7 @@ export default {
 
                     return await InteractionHelper.safeEditReply(interaction, {
                         embeds: [
-                            successEmbed('Teendo Eltavolitva', `A(z) "${removedTask.text}" eltavolitva a(z) "${listData.name}" megosztott listarol.`)
+                            successEmbed('Task Removed', `Removed "${removedTask.text}" from the shared list "${listData.name}".`)
                         ]
                     });
                 }
@@ -426,8 +426,8 @@ export default {
                 return await InteractionHelper.safeEditReply(interaction, {
                     embeds: [
                         successEmbed(
-                            "Teendo Hozzaadva",
-                            `"${taskText}" hozzaadva a teendo listadhoz.`
+                            "Task Added",
+                            `Added "${taskText}" to your to-do list.`
                         ),
                     ],
                 });
@@ -436,7 +436,7 @@ export default {
             case 'list': {
                 if (userData.tasks.length === 0) {
                     return await InteractionHelper.safeEditReply(interaction, {
-                        embeds: [successEmbed('A teendo listad ures!', "A Teendo Listad")],
+                        embeds: [successEmbed('Your to-do list is empty!', "Your To-Do List")],
                     });
                 }
 
@@ -449,7 +449,7 @@ export default {
 
                 return await InteractionHelper.safeEditReply(interaction, {
                     embeds: [
-                        successEmbed('A Teendo Listad', taskList)
+                        successEmbed('Your To-Do List', taskList)
                     ],
                 });
             }
@@ -459,11 +459,11 @@ export default {
                 const task = userData.tasks.find(t => t.id === taskNumber);
 
                 if (!task) {
-                    return await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'Teendo nem talalhato.' });
+                    return await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'Task not found.' });
                 }
 
                 if (task.completed) {
-                    return await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: `A(z) #${task.id} teendo mar kesznek van jelolve.` });
+                    return await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: `Task #${task.id} is already completed.` });
                 }
 
                 task.completed = true;
@@ -471,7 +471,7 @@ export default {
 
                 return await InteractionHelper.safeEditReply(interaction, {
                     embeds: [
-                        successEmbed('Teendo Elintezve', `"${task.text}" kesznek jelolve!`)
+                        successEmbed('Task Completed', `Marked "${task.text}" as complete!`)
                     ],
                 });
             }
@@ -481,7 +481,7 @@ export default {
                 const taskIndex = userData.tasks.findIndex(t => t.id === taskNumber);
 
                 if (taskIndex === -1) {
-                    return await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'Teendo nem talalhato.' });
+                    return await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'Task not found.' });
                 }
 
                 const [removedTask] = userData.tasks.splice(taskIndex, 1);
@@ -489,13 +489,13 @@ export default {
 
                 return await InteractionHelper.safeEditReply(interaction, {
                     embeds: [
-                        successEmbed('Teendo Eltavolitva', `"${removedTask.text}" eltavolitva a teendo listadrol.`)
+                        successEmbed('Task Removed', `Removed "${removedTask.text}" from your to-do list.`)
                     ],
                 });
             }
 
             default:
-                return await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'Ervenytelen alparancs.' });
+                return await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'Invalid subcommand.' });
         }
     },
 };

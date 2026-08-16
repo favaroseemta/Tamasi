@@ -97,19 +97,19 @@ function formatBigIntToBase(value, baseKey) {
 export default {
     data: new SlashCommandBuilder()
         .setName('baseconvert')
-        .setDescription('Szamok atvaltasa kulonbozo szamrendszerek kozott')
+        .setDescription('Convert numbers between different bases')
         .addStringOption(option =>
             option.setName('number')
-                .setDescription('Az atvaltoztatando szam')
+                .setDescription('The number to convert')
                 .setRequired(true))
         .addStringOption(option =>
             option.setName('from')
-                .setDescription('Forras szamrendszer/formatum')
+                .setDescription('Source base/format')
                 .setRequired(true)
                 .addChoices(...BASE_NAMES))
         .addStringOption(option =>
             option.setName('to')
-                .setDescription('Cel szamrendszer/formatum (alapertelmezett: mind)')
+                .setDescription('Target base/format (default: all)')
                 .setRequired(false)
                 .addChoices(...BASE_NAMES)),
 
@@ -137,7 +137,7 @@ export default {
         if (!cleanNumber) {
             return replyUserError(interaction, {
                 type: ErrorTypes.VALIDATION,
-                message: 'Meg kell adnod egy szamot az atvaltashoz.\n\n**Pelda:** `/baseconvert number:1010 from:BIN to:DEC`',
+                message: 'You must provide a number to convert.\n\n**Example:** `/baseconvert number:1010 from:BIN to:DEC`',
             });
         }
 
@@ -147,18 +147,18 @@ export default {
         if (!regex.test(cleanNumber)) {
             let examples = '';
             if (fromBase === 'BIN') {
-                examples = '\n\n**Ervenyes:** 101, 1010, 11111 | **Ervenytelen:** 5 (az 5-os szamjegy nem megengedett)';
+                examples = '\n\n**Valid:** 101, 1010, 11111 | **Invalid:** 5 (digit 5 not allowed)';
             } else if (fromBase === 'OCT') {
-                examples = '\n\n**Ervenyes:** 77, 123, 755 | **Ervenytelen:** 8 (csak 0-7 engedelyezett)';
+                examples = '\n\n**Valid:** 77, 123, 755 | **Invalid:** 8 (only 0-7 allowed)';
             } else if (fromBase === 'DEC') {
-                examples = '\n\n**Ervenyes:** 42, 123, 999 | **Ervenytelen:** 12.34 (nincs tizedesjegy)';
+                examples = '\n\n**Valid:** 42, 123, 999 | **Invalid:** 12.34 (no decimals)';
             } else if (fromBase === 'HEX') {
-                examples = '\n\n**Ervenyes:** FF, A1B2, DEADBEEF | **Ervenytelen:** G (csak 0-9, A-F)';
+                examples = '\n\n**Valid:** FF, A1B2, DEADBEEF | **Invalid:** G (only 0-9, A-F)';
             }
             logger.warn(`Invalid base conversion input: ${cleanNumber} for base ${fromBase}`);
             return replyUserError(interaction, {
                 type: ErrorTypes.VALIDATION,
-                message: `Ezt adtad meg: \`${cleanNumber}\`\n\nErvenyes karakterek: \`${alphabet}\`${examples}`,
+                message: `You provided: \`${cleanNumber}\`\n\nValid characters: \`${alphabet}\`${examples}`,
             });
         }
 
@@ -173,7 +173,7 @@ export default {
             logger.error('Base conversion parse error:', error);
             return replyUserError(interaction, {
                 type: ErrorTypes.VALIDATION,
-                message: 'A szam tul nagy a feldolgozashoz.\n\nProbald kisebb szammal.',
+                message: 'The number is too large to process.\n\nTry with a smaller number.',
             });
         }
 
@@ -185,10 +185,10 @@ export default {
                 result = formatBigIntToBase(decimalValue, toBase);
 
                 const embed = successEmbed(
-                    '🔄 Szamrendszer Atvaltas Eredmeny',
-                    `**Innen: ${fromName} (${fromBase}):** \`${fromPrefix}${cleanNumber}\`\n` +
-                    `**Ide: ${toName} (${toBase}):** \`${toPrefix}${result}\`\n` +
-                    `**Tizes szamrendszerben:** \`${decimalValue.toLocaleString()}\``
+                    '🔄 Base Conversion Result',
+                    `**From ${fromName} (${fromBase}):** \`${fromPrefix}${cleanNumber}\`\n` +
+                    `**To ${toName} (${toBase}):** \`${toPrefix}${result}\`\n` +
+                    `**Decimal:** \`${decimalValue.toLocaleString()}\``
                 );
                 embed.setColor(getColor('success'));
 
@@ -198,13 +198,13 @@ export default {
                 logger.error(`Base conversion error to ${toName}:`, error);
                 await replyUserError(interaction, {
                     type: ErrorTypes.VALIDATION,
-                    message: 'Az eredmeny tul nagy vagy inkompatibilis lenne.\n\nProbald kisebb szammal vagy masik cel szamrendszerrel.',
+                    message: 'The result would be too large or incompatible.\n\nTry with a smaller number or different target base.',
                 });
             }
 
         } else {
-            let description = `**Bemenet (${fromName}):** \`${fromPrefix}${cleanNumber}\`\n`;
-            description += `**Tizes szamrendszerben:** \`${decimalValue.toLocaleString()}\`\n\n`;
+            let description = `**Input (${fromName}):** \`${fromPrefix}${cleanNumber}\`\n`;
+            description += `**Decimal:** \`${decimalValue.toLocaleString()}\`\n\n`;
 
             for (const [baseKey, { prefix, name }] of Object.entries(BASE_ALPHABETS)) {
                 if (baseKey === fromBase) continue;
@@ -214,12 +214,12 @@ export default {
 
                     description += `**${name} (${baseKey}):** \`${prefix}${value}\`\n`;
                 } catch (error) {
-                    description += `**${name} (${baseKey}):** *Tul nagy az atvaltashoz*\n`;
+                    description += `**${name} (${baseKey}):** *Too large to convert*\n`;
                 }
             }
 
             const embed = successEmbed(
-                '🔄 Szamrendszer Atvaltas Eredmenyek',
+                '🔄 Base Conversion Results',
                 description
             );
             embed.setColor(getColor('primary'));

@@ -5,11 +5,11 @@ import { InteractionHelper } from '../../utils/interactionHelper.js';
 export default {
     data: new SlashCommandBuilder()
     .setName("userinfo")
-    .setDescription("Reszletes informaciok egy felhasznalorol")
+    .setDescription("Get detailed information about a user")
     .addUserOption((option) =>
       option
         .setName("target")
-        .setDescription("A megtekintendo felhasznalo (alapertelmezett: te)"),
+        .setDescription("The user to inspect (defaults to you)"),
     ),
 
   async execute(interaction) {
@@ -29,35 +29,35 @@ export default {
     const createdTimestamp = Math.floor(user.createdAt.getTime() / 1000);
     const joinedTimestamp = member?.joinedAt ? Math.floor(member.joinedAt.getTime() / 1000) : null;
 
-    const embed = createEmbed({ title: `Felhasznaloi info: ${user.username}` })
+    const embed = createEmbed({ title: `User Info: ${user.username}` })
       .setThumbnail(user.displayAvatarURL({ size: 256 }))
       .addFields(
         { name: "ID", value: user.id, inline: true },
-        { name: "Bot", value: user.bot ? "Igen" : "Nem", inline: true },
+        { name: "Bot", value: user.bot ? "Yes" : "No", inline: true },
         {
-          name: "Rangok",
+          name: "Roles",
           value:
             member && member.roles.cache.size > 1
               ? member.roles.cache
                   .map((r) => r.name)
                   .slice(0, 5)
                   .join(",")
-              : "Nincsenek",
+              : "None",
           inline: true,
         },
         {
-          name: "Fiok letrehozva",
+          name: "Account Created",
           value: `<t:${createdTimestamp}:R>`,
           inline: false,
         },
         {
-          name: "Csatlakozott a szerverhez",
-          value: joinedTimestamp ? `<t:${joinedTimestamp}:R>` : "Nincs a szerveren",
+          name: "Joined Server",
+          value: joinedTimestamp ? `<t:${joinedTimestamp}:R>` : "Not in server",
           inline: false,
         },
         {
-          name: "Legmagasabb rang",
-          value: member?.roles?.highest?.name || "Nincsenek",
+          name: "Highest Role",
+          value: member?.roles?.highest?.name || "None",
           inline: true,
         },
       );

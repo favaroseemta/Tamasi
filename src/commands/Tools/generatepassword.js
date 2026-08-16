@@ -8,24 +8,24 @@ import { InteractionHelper } from '../../utils/interactionHelper.js';
 export default {
     data: new SlashCommandBuilder()
         .setName('generatepassword')
-        .setDescription('Eros, veletlenszeru jelszo generalasa')
+        .setDescription('Generate a strong, random password')
         .addIntegerOption(option =>
             option.setName('length')
-                .setDescription('Jelszo hossza (alapertelmezett: 16, max: 50)')
+                .setDescription('Password length (default: 16, max: 50)')
                 .setMinValue(8)
                 .setMaxValue(50)
                 .setRequired(false))
         .addBooleanOption(option =>
             option.setName('uppercase')
-                .setDescription('Nagybetuk tartalmazasa (A-Z)')
+                .setDescription('Include uppercase letters (A-Z)')
                 .setRequired(false))
         .addBooleanOption(option =>
             option.setName('numbers')
-                .setDescription('Szamok tartalmazasa (0-9)')
+                .setDescription('Include numbers (0-9)')
                 .setRequired(false))
         .addBooleanOption(option =>
             option.setName('symbols')
-                .setDescription('Szimbolumok tartalmazasa (!@#$%^&*)')
+                .setDescription('Include symbols (!@#$%^&*)')
                 .setRequired(false)),
 
     async execute(interaction) {
@@ -48,7 +48,7 @@ export default {
         const includeSymbols = interaction.options.getBoolean('symbols') ?? true;
 
         if (length < 8 || length > 50) {
-            await replyUserError(interaction, { type: ErrorTypes.VALIDATION, message: `A jelszo hossza 8 es 50 karakter kozott kell legyen. A megadott ertek: ${length}` });
+            await replyUserError(interaction, { type: ErrorTypes.VALIDATION, message: `Password must be 8-50 characters. You provided: ${length}` });
             return;
         }
 
@@ -89,7 +89,7 @@ export default {
             password = password.substring(0, randomIndex) + randomSymbol + password.substring(randomIndex + 1);
         }
 
-        let strength = 'Gyenge';
+        let strength = 'Weak';
         let strengthEmoji = '🔴';
         let strengthColor = getColor('error');
 
@@ -114,29 +114,29 @@ export default {
         if (hasSymbol) score *= 1.3;
 
         if (score > 80) {
-            strength = 'Nagyon eros';
+            strength = 'Very Strong';
             strengthEmoji = '🟢';
             strengthColor = getColor('success');
         } else if (score > 60) {
-            strength = 'Eros';
+            strength = 'Strong';
             strengthEmoji = '🟢';
             strengthColor = getColor('success');
         } else if (score > 40) {
-            strength = 'Jo';
+            strength = 'Good';
             strengthEmoji = '🟡';
             strengthColor = getColor('warning');
         } else if (score > 20) {
-            strength = 'Gyenge';
+            strength = 'Weak';
             strengthEmoji = '🟠';
             strengthColor = getColor('warning');
         }
 
         const embed = successEmbed(
-            '🔑 Generalt Jelszo',
-            `**Jelszo:** ||\`${password}\`||\n` +
-            `**Hossz:** ${password.length} karakter\n` +
-            `**Erosseg:** ${strengthEmoji} ${strength}\n` +
-            `**Tartalmaz:** ${hasLower ? 'Kisbetu' : ''}${hasUpper ? ', Nagybetu' : ''}${hasNumber ? ', Szamok' : ''}${hasSymbol ? ', Szimbolumok' : ''}`
+            '🔑 Generated Password',
+            `**Password:** ||\`${password}\`||\n` +
+            `**Length:** ${password.length} characters\n` +
+            `**Strength:** ${strengthEmoji} ${strength}\n` +
+            `**Contains:** ${hasLower ? 'Lowercase' : ''}${hasUpper ? ', Uppercase' : ''}${hasNumber ? ', Numbers' : ''}${hasSymbol ? ', Symbols' : ''}`
         ).setColor(strengthColor);
 
         await InteractionHelper.safeEditReply(interaction, {

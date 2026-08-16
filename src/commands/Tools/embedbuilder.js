@@ -27,17 +27,17 @@ const MAX_FIELDS = 25;
 const IDLE_TIMEOUT = 900_000; 
 
 const COLOR_PRESETS = [
-    { label: 'Alapertelmezett (Kek)', value: '#336699', emoji: '' },
-    { label: 'Siker (Zold)',          value: '#57F287', emoji: '' },
-    { label: 'Hiba (Piros)',          value: '#ED4245', emoji: '' },
-    { label: 'Figyelmeztetes (Sarga)', value: '#FEE75C', emoji: '' },
-    { label: 'Info (Vilagoskek)',     value: '#3498DB', emoji: '' },
+    { label: 'Primary (Blue)',        value: '#336699', emoji: '' },
+    { label: 'Success (Green)',       value: '#57F287', emoji: '' },
+    { label: 'Error (Red)',           value: '#ED4245', emoji: '' },
+    { label: 'Warning (Yellow)',      value: '#FEE75C', emoji: '' },
+    { label: 'Info (Bright Blue)',    value: '#3498DB', emoji: '' },
     { label: 'Blurple (Discord)',     value: '#5865F2', emoji: '' },
-    { label: 'Fukszia',               value: '#EB459E', emoji: '' },
-    { label: 'Arany',                 value: '#F1C40F', emoji: '' },
-    { label: 'Feher',                 value: '#FFFFFF', emoji: '' },
-    { label: 'Sotet',                 value: '#202225', emoji: '' },
-    { label: 'Egyedi Hex...',         value: '__custom__', emoji: '' },
+    { label: 'Fuchsia',              value: '#EB459E', emoji: '' },
+    { label: 'Gold',                  value: '#F1C40F', emoji: '' },
+    { label: 'White',                 value: '#FFFFFF', emoji: '' },
+    { label: 'Dark',                  value: '#202225', emoji: '' },
+    { label: 'Custom Hex...',         value: '__custom__', emoji: '' },
 ];
 
 function isValidUrl(str) {
@@ -98,7 +98,7 @@ function buildPreviewEmbed(state) {
         state.fields.length === 0 &&
         !state.author?.name
     ) {
-        embed.setDescription('*(Ures — hasznald az alabbi menut a tartalom hozzaadasahoz)*');
+        embed.setDescription('*(Empty — use the menu below to add content)*');
     }
 
     return embed;
@@ -109,44 +109,44 @@ function buildDashboardEmbed(state) {
         str.length > n ? str.substring(0, n) + '…' : str;
 
     const lines = [
-        `**Cim** › ${state.title ?`\`${trunc(state.title, 40)}\`` : '`Nincs megadva`'}`,
-        `**Leiras** › ${state.description ?`${state.description.length} karakter`: '`Nincs megadva`'}`,
-        `**Szin** › ${state.color ?`\`${state.color}\`` : '`Alapertelmezett`'}`,
-        `**Szerzo** › ${state.author?.name ?`\`${trunc(state.author.name, 30)}\`` : '`Nincs megadva`'}`,
-        `**Lablec** › ${state.footer?.text ?`\`${trunc(state.footer.text, 30)}\`` : '`Nincs megadva`'}`,
-        `**Belyegkep** › ${state.thumbnail ? '✅ Beallitva' : '`Nincs megadva`'}`,
-        `**Kep** › ${state.image ? '✅ Beallitva' : '`Nincs megadva`'}`,
-        `**Idobelyeg** › ${state.timestamp ? '✅ Engedelyezve' : '`Kikapcsolva`'}`,
-        `**Mezok** › ${state.fields.length} / ${MAX_FIELDS}`,
+        `**Title** › ${state.title ?`\`${trunc(state.title, 40)}\`` : '`Not set`'}`,
+        `**Description** › ${state.description ?`${state.description.length} character(s)`: '`Not set`'}`,
+        `**Color** › ${state.color ?`\`${state.color}\`` : '`Default`'}`,
+        `**Author** › ${state.author?.name ?`\`${trunc(state.author.name, 30)}\`` : '`Not set`'}`,
+        `**Footer** › ${state.footer?.text ?`\`${trunc(state.footer.text, 30)}\`` : '`Not set`'}`,
+        `**Thumbnail** › ${state.thumbnail ? '✅ Set' : '`Not set`'}`,
+        `**Image** › ${state.image ? '✅ Set' : '`Not set`'}`,
+        `**Timestamp** › ${state.timestamp ? '✅ Enabled' : '`Disabled`'}`,
+        `**Fields** › ${state.fields.length} / ${MAX_FIELDS}`,
     ];
 
     return new EmbedBuilder()
-        .setTitle('Embed Keszito — Vezerlopult')
+        .setTitle('Embed Builder — Control Panel')
         .setDescription(lines.join('\n'))
         .setColor(getColor('info'))
-        .setFooter({ text: 'A fenti elonezet eloben frissul · 5 perc inaktivitas utan bezarul' });
+        .setFooter({ text: 'The preview above updates live · Closes after 5 min of inactivity' });
 }
 
 function buildMainMenu(state) {
     const primaryRow = new ActionRowBuilder().addComponents(
         new ButtonBuilder()
             .setCustomId('eb_main_edit_content')
-            .setLabel('Tartalom szerkesztese')
+            .setLabel('Edit Content')
             .setStyle(ButtonStyle.Primary)
             .setEmoji('✏️'),
         new ButtonBuilder()
             .setCustomId('eb_main_set_color')
-            .setLabel('Szin beallitasa')
+            .setLabel('Set Color')
             .setStyle(ButtonStyle.Secondary)
             .setEmoji('🎨'),
         new ButtonBuilder()
             .setCustomId('eb_main_set_images')
-            .setLabel('Kepek beallitasa')
+            .setLabel('Set Images')
             .setStyle(ButtonStyle.Secondary)
             .setEmoji('🖼️'),
         new ButtonBuilder()
             .setCustomId('eb_main_post_embed')
-            .setLabel('Embed kuldese')
+            .setLabel('Post Embed')
             .setStyle(ButtonStyle.Success)
             .setEmoji('📤'),
     );
@@ -154,24 +154,24 @@ function buildMainMenu(state) {
     const secondaryRow = new ActionRowBuilder().addComponents(
         new ButtonBuilder()
             .setCustomId('eb_main_add_field')
-            .setLabel(`Mezo hozzaadasa (${state.fields.length}/${MAX_FIELDS})`)
+            .setLabel(`Add Field (${state.fields.length}/${MAX_FIELDS})`)
             .setStyle(ButtonStyle.Primary)
             .setEmoji('➕'),
         new ButtonBuilder()
             .setCustomId('eb_main_edit_field')
-            .setLabel('Mezo szerkesztese')
+            .setLabel('Edit Field')
             .setStyle(ButtonStyle.Secondary)
             .setEmoji('📝')
             .setDisabled(state.fields.length === 0),
         new ButtonBuilder()
             .setCustomId('eb_main_remove_field')
-            .setLabel('Mezo eltavolitasa')
+            .setLabel('Remove Field')
             .setStyle(ButtonStyle.Danger)
             .setEmoji('➖')
             .setDisabled(state.fields.length === 0),
         new ButtonBuilder()
             .setCustomId('eb_main_toggle_timestamp')
-            .setLabel(state.timestamp ? 'Idobelyeg kikapcsolasa' : 'Idobelyeg engedelyezese')
+            .setLabel(state.timestamp ? 'Disable Timestamp' : 'Enable Timestamp')
             .setStyle(ButtonStyle.Secondary)
             .setEmoji('🕐'),
     );
@@ -179,18 +179,18 @@ function buildMainMenu(state) {
     const tertiaryRow = new ActionRowBuilder().addComponents(
         new ButtonBuilder()
             .setCustomId('eb_main_reorder_fields')
-            .setLabel('Mezok sorrendje')
+            .setLabel('Reorder Fields')
             .setStyle(ButtonStyle.Secondary)
             .setEmoji('↕️')
             .setDisabled(state.fields.length < 2),
         new ButtonBuilder()
             .setCustomId('eb_main_json_export')
-            .setLabel('JSON / Nyers adat')
+            .setLabel('JSON / Raw Data')
             .setStyle(ButtonStyle.Secondary)
             .setEmoji('📋'),
         new ButtonBuilder()
             .setCustomId('eb_main_reset_all')
-            .setLabel('Minden torlese')
+            .setLabel('Reset Everything')
             .setStyle(ButtonStyle.Danger)
             .setEmoji('🗑️'),
     );
@@ -208,27 +208,27 @@ async function refreshDashboard(interaction, state) {
 async function handleEditContent(selectInteraction, rootInteraction, state) {
     const modal = new ModalBuilder()
         .setCustomId('eb_content')
-        .setTitle('Tartalom szerkesztese')
+        .setTitle('Edit Content')
         .addComponents(
             new ActionRowBuilder().addComponents(
                 new TextInputBuilder()
                     .setCustomId('eb_title')
-                    .setLabel('Cim (max 256 karakter)')
+                    .setLabel('Title (max 256 characters)')
                     .setStyle(TextInputStyle.Short)
                     .setValue(state.title || '')
                     .setMaxLength(256)
                     .setRequired(false)
-                    .setPlaceholder('Az en embed cimen'),
+                    .setPlaceholder('My Embed Title'),
             ),
             new ActionRowBuilder().addComponents(
                 new TextInputBuilder()
                     .setCustomId('eb_description')
-                    .setLabel('Leiras (max 4000 karakter)')
+                    .setLabel('Description (max 4000 characters)')
                     .setStyle(TextInputStyle.Paragraph)
                     .setValue(state.description ? state.description.substring(0, 4000) : '')
                     .setMaxLength(4000)
                     .setRequired(false)
-                    .setPlaceholder('Ird ide az embed leirasat...'),
+                    .setPlaceholder('Write your embed description here...'),
             ),
         );
 
@@ -257,23 +257,23 @@ async function handleSetColor(selectInteraction, rootInteraction, state) {
 
     const colorSelect = new StringSelectMenuBuilder()
         .setCustomId('eb_color_pick')
-        .setPlaceholder('Valassz szint...')
+        .setPlaceholder('Choose a color...')
         .addOptions(
             COLOR_PRESETS.map(c =>
                 new StringSelectMenuOptionBuilder()
                     .setLabel(c.label)
                     .setValue(c.value)
                     .setEmoji(c.emoji)
-                    .setDescription(c.value !== '__custom__' ? c.value : 'Adj meg egy sajat #RRGGBB erteket'),
+                    .setDescription(c.value !== '__custom__' ? c.value : 'Enter your own #RRGGBB value'),
             ),
         );
 
     await selectInteraction.followUp({
         embeds: [
             new EmbedBuilder()
-                .setTitle('Szin beallitasa')
+                .setTitle('Set Color')
                 .setDescription(
-                    'Valassz egy elore beallitott szint vagy valaszd az **Egyedi Hex** opciot a sajat `#RRGGBB` erteked megadasahoz.',
+                    'Select a preset color or choose **Custom Hex** to enter your own `#RRGGBB` value.',
                 )
                 .setColor(getColor('info')),
         ],
@@ -296,12 +296,12 @@ async function handleSetColor(selectInteraction, rootInteraction, state) {
         if (picked === '__custom__') {
             const hexModal = new ModalBuilder()
                 .setCustomId('eb_custom_hex')
-                .setTitle('Egyedi szin')
+                .setTitle('Custom Color')
                 .addComponents(
                     new ActionRowBuilder().addComponents(
                         new TextInputBuilder()
                             .setCustomId('hex_value')
-                            .setLabel('Hex szinkod')
+                            .setLabel('Hex Color Code')
                             .setStyle(TextInputStyle.Short)
                             .setPlaceholder('#5865F2')
                             .setMaxLength(7)
@@ -327,7 +327,7 @@ async function handleSetColor(selectInteraction, rootInteraction, state) {
             if (!isValidHex(hex)) {
                 await replyUserError(hexSubmit, {
                     type: ErrorTypes.USER_INPUT,
-                    message: `\`${hex}\` nem ervenyes hex szin. Hasznald a \`#RRGGBB\` formatumot (pl. \`#5865F2\`).`,
+                    message: `\`${hex}\` is not a valid hex color. Use the format \`#RRGGBB\` (e.g. \`#5865F2\`).`,
                 });
                 return;
             }
@@ -349,22 +349,22 @@ async function handleSetColor(selectInteraction, rootInteraction, state) {
 async function handleSetAuthor(selectInteraction, rootInteraction, state) {
     const modal = new ModalBuilder()
         .setCustomId('eb_author')
-        .setTitle('Szerzo beallitasa')
+        .setTitle('Set Author')
         .addComponents(
             new ActionRowBuilder().addComponents(
                 new TextInputBuilder()
                     .setCustomId('author_name')
-                    .setLabel('Szerzo neve (hagyjd uresen az eltavolitashoz)')
+                    .setLabel('Author Name (leave blank to remove)')
                     .setStyle(TextInputStyle.Short)
                     .setValue(state.author?.name || '')
                     .setMaxLength(256)
                     .setRequired(false)
-                    .setPlaceholder('Neved'),
+                    .setPlaceholder('Your Name'),
             ),
             new ActionRowBuilder().addComponents(
                 new TextInputBuilder()
                     .setCustomId('author_icon')
-                    .setLabel('Szerzo ikon URL (opcionalis)')
+                    .setLabel('Author Icon URL (optional)')
                     .setStyle(TextInputStyle.Short)
                     .setValue(state.author?.iconUrl || '')
                     .setRequired(false)
@@ -373,7 +373,7 @@ async function handleSetAuthor(selectInteraction, rootInteraction, state) {
             new ActionRowBuilder().addComponents(
                 new TextInputBuilder()
                     .setCustomId('author_url')
-                    .setLabel('Szerzo hivatkozas URL (opcionalis)')
+                    .setLabel('Author Link URL (optional)')
                     .setStyle(TextInputStyle.Short)
                     .setValue(state.author?.url || '')
                     .setRequired(false)
@@ -400,14 +400,14 @@ async function handleSetAuthor(selectInteraction, rootInteraction, state) {
     if (iconUrl && !isValidUrl(iconUrl)) {
         await replyUserError(submitted, {
             type: ErrorTypes.USER_INPUT,
-            message: 'A szerzo ikon URL-nek ervenyes `https://` URL-nek kell lennie.',
+            message: 'Author icon URL must be a valid `https://` URL.',
         });
         return;
     }
     if (url && !isValidUrl(url)) {
         await replyUserError(submitted, {
             type: ErrorTypes.USER_INPUT,
-            message: 'A szerzo hivatkozas URL-nek ervenyes `https://` URL-nek kell lennie.',
+            message: 'Author link URL must be a valid `https://` URL.',
         });
         return;
     }
@@ -421,22 +421,22 @@ async function handleSetAuthor(selectInteraction, rootInteraction, state) {
 async function handleSetFooter(selectInteraction, rootInteraction, state) {
     const modal = new ModalBuilder()
         .setCustomId('eb_footer')
-        .setTitle('Lablec beallitasa')
+        .setTitle('Set Footer')
         .addComponents(
             new ActionRowBuilder().addComponents(
                 new TextInputBuilder()
                     .setCustomId('footer_text')
-                    .setLabel('Lablec szovege (hagyjd uresen az eltavolitashoz)')
+                    .setLabel('Footer Text (leave blank to remove)')
                     .setStyle(TextInputStyle.Short)
                     .setValue(state.footer?.text || '')
                     .setMaxLength(2048)
                     .setRequired(false)
-                    .setPlaceholder('TitanBot segitsegevel keszult'),
+                    .setPlaceholder('Built with TitanBot'),
             ),
             new ActionRowBuilder().addComponents(
                 new TextInputBuilder()
                     .setCustomId('footer_icon')
-                    .setLabel('Lablec ikon URL (opcionalis)')
+                    .setLabel('Footer Icon URL (optional)')
                     .setStyle(TextInputStyle.Short)
                     .setValue(state.footer?.iconUrl || '')
                     .setRequired(false)
@@ -462,7 +462,7 @@ async function handleSetFooter(selectInteraction, rootInteraction, state) {
     if (iconUrl && !isValidUrl(iconUrl)) {
         await replyUserError(submitted, {
             type: ErrorTypes.USER_INPUT,
-            message: 'A lablec ikon URL-nek ervenyes `https://` URL-nek kell lennie.',
+            message: 'Footer icon URL must be a valid `https://` URL.',
         });
         return;
     }
@@ -478,26 +478,26 @@ async function handleSetImages(selectInteraction, rootInteraction, state) {
 
     const imageSelect = new StringSelectMenuBuilder()
         .setCustomId('eb_image_pick')
-        .setPlaceholder('Mit szeretnel megvaltoztatni?')
+        .setPlaceholder('What would you like to change?')
         .addOptions(
             new StringSelectMenuOptionBuilder()
-                .setLabel('Belyegkep beallitasa')
-                .setDescription('Kis kep a jobb felso sarokban')
+                .setLabel('Set Thumbnail')
+                .setDescription('Small image displayed in the top-right corner')
                 .setValue('set_thumbnail')
                 .setEmoji('🖼️'),
             new StringSelectMenuOptionBuilder()
-                .setLabel('Nagy kep beallitasa')
-                .setDescription('Teljes szelessegu banner kep alul')
+                .setLabel('Set Large Image')
+                .setDescription('Full-width banner image at the bottom')
                 .setValue('set_image')
                 .setEmoji('📸'),
             new StringSelectMenuOptionBuilder()
-                .setLabel('Belyegkep torlese')
-                .setDescription('Jelenlegi belyegkep eltavolitasa')
+                .setLabel('Clear Thumbnail')
+                .setDescription('Remove the current thumbnail')
                 .setValue('clear_thumbnail')
                 .setEmoji('🗑️'),
             new StringSelectMenuOptionBuilder()
-                .setLabel('Nagy kep torlese')
-                .setDescription('Jelenlegi nagy kep eltavolitasa')
+                .setLabel('Clear Large Image')
+                .setDescription('Remove the current large image')
                 .setValue('clear_image')
                 .setEmoji('🗑️'),
         );
@@ -505,11 +505,11 @@ async function handleSetImages(selectInteraction, rootInteraction, state) {
     await selectInteraction.followUp({
         embeds: [
             new EmbedBuilder()
-                .setTitle('Kepek beallitasa')
-                .setDescription('Valassz ki egy kepet a beallitashoz vagy eltavolitasoz.')
+                .setTitle('Set Images')
+                .setDescription('Choose which image to set or remove.')
                 .addFields(
-                    { name: 'Belyegkep',   value: state.thumbnail ? `[Megtekintes](${state.thumbnail})` : '`Nincs megadva`', inline: true },
-                    { name: 'Nagy kep',    value: state.image     ? `[Megtekintes](${state.image})`     : '`Nincs megadva`', inline: true },
+                    { name: 'Thumbnail',    value: state.thumbnail ? `[View](${state.thumbnail})` : '`Not set`', inline: true },
+                    { name: 'Large Image',  value: state.image     ? `[View](${state.image})`     : '`Not set`', inline: true },
                 )
                 .setColor(getColor('info')),
         ],
@@ -546,12 +546,12 @@ async function handleSetImages(selectInteraction, rootInteraction, state) {
 
         const urlModal = new ModalBuilder()
             .setCustomId('eb_image_url')
-            .setTitle(isThumb ? 'Belyegkep beallitasa' : 'Nagy kep beallitasa')
+            .setTitle(isThumb ? 'Set Thumbnail' : 'Set Large Image')
             .addComponents(
                 new ActionRowBuilder().addComponents(
                     new TextInputBuilder()
                         .setCustomId('image_url')
-                        .setLabel('Kep URL')
+                        .setLabel('Image URL')
                         .setStyle(TextInputStyle.Short)
                         .setValue(isThumb ? (state.thumbnail || '') : (state.image || ''))
                         .setRequired(true)
@@ -576,7 +576,7 @@ async function handleSetImages(selectInteraction, rootInteraction, state) {
         if (!isValidUrl(url)) {
             await replyUserError(submitted, {
                 type: ErrorTypes.USER_INPUT,
-                message: 'A kep URL-nek egy nyilvanosan elrheto kepre mutato ervenyes `https://` linknek kell lennie.',
+                message: 'Image URL must be a valid `https://` link to a publicly accessible image.',
             });
             return;
         }
@@ -597,47 +597,47 @@ async function handleAddField(selectInteraction, rootInteraction, state) {
         await selectInteraction.deferUpdate();
         await replyUserError(selectInteraction, {
             type: ErrorTypes.VALIDATION,
-            message: `Az embedek legfeljebb ${MAX_FIELDS} mezovel rendelkezhetnek.`,
+            message: `Embeds can have a maximum of ${MAX_FIELDS} fields.`,
         });
         return;
     }
 
     const modal = new ModalBuilder()
         .setCustomId('eb_add_field')
-        .setTitle('Mezo hozzaadasa');
+        .setTitle('Add Field');
 
     const fieldNameLabel = new LabelBuilder()
-        .setLabel('Mezo neve (max 256 karakter)')
+        .setLabel('Field Name (max 256 characters)')
         .setTextInputComponent(
             new TextInputBuilder()
                 .setCustomId('field_name')
                 .setStyle(TextInputStyle.Short)
                 .setMaxLength(256)
                 .setRequired(true)
-                .setPlaceholder('Mezo cime'),
+                .setPlaceholder('Field Title'),
         );
 
     const fieldValueLabel = new LabelBuilder()
-        .setLabel('Mezo erteke (max 1024 karakter)')
+        .setLabel('Field Value (max 1024 characters)')
         .setTextInputComponent(
             new TextInputBuilder()
                 .setCustomId('field_value')
                 .setStyle(TextInputStyle.Paragraph)
                 .setMaxLength(1024)
                 .setRequired(true)
-                .setPlaceholder('Ird ide a mezo tartalmat...'),
+                .setPlaceholder('Field content goes here...'),
         );
 
     const inlineRadio = new RadioGroupBuilder()
         .setCustomId('field_inline')
         .setRequired(false)
         .addOptions([
-            { label: 'Nem — teljes szelesseg', value: 'no' },
-            { label: 'Igen — egymas melle', value: 'yes' },
+            { label: 'No — full width', value: 'no' },
+            { label: 'Yes — side-by-side', value: 'yes' },
         ]);
 
     const inlineLabel = new LabelBuilder()
-        .setLabel('Egymas melle rendezes (inline)?')
+        .setLabel('Display inline?')
         .setRadioGroupComponent(inlineRadio);
 
     modal.addLabelComponents(fieldNameLabel, fieldValueLabel, inlineLabel);
@@ -669,13 +669,13 @@ async function handleEditField(selectInteraction, rootInteraction, state) {
 
     const pickSelect = new StringSelectMenuBuilder()
         .setCustomId('eb_edit_field_pick')
-        .setPlaceholder('Valassz ki egy mezot a szerkeszteshez...')
+        .setPlaceholder('Select a field to edit...')
         .addOptions(
             state.fields.slice(0, 25).map((f, i) =>
                 new StringSelectMenuOptionBuilder()
                     .setLabel(`${i + 1}. ${f.name.substring(0, 50)}`)
                     .setDescription(
-                        `${f.value.substring(0, 80)}${f.value.length > 80 ? '…' : ''} · ${f.inline ? 'Inline' : 'Blokk'}`,
+                        `${f.value.substring(0, 80)}${f.value.length > 80 ? '…' : ''} · ${f.inline ? 'Inline' : 'Block'}`,
                     )
                     .setValue(String(i))
                     .setEmoji('📝'),
@@ -685,8 +685,8 @@ async function handleEditField(selectInteraction, rootInteraction, state) {
     await selectInteraction.followUp({
         embeds: [
             new EmbedBuilder()
-                .setTitle('Mezo szerkesztese')
-                .setDescription('Valassz ki egy mezot a modositashoz.')
+                .setTitle('Edit Field')
+                .setDescription('Select the field you want to modify.')
                 .setColor(getColor('info')),
         ],
         components: [new ActionRowBuilder().addComponents(pickSelect)],
@@ -709,10 +709,10 @@ async function handleEditField(selectInteraction, rootInteraction, state) {
 
         const modal = new ModalBuilder()
             .setCustomId('eb_edit_field_modal')
-            .setTitle(`Mezo szerkesztese: ${idx + 1}`);
+            .setTitle(`Edit Field ${idx + 1}`);
 
         const editNameLabel = new LabelBuilder()
-            .setLabel('Mezo neve')
+            .setLabel('Field Name')
             .setTextInputComponent(
                 new TextInputBuilder()
                     .setCustomId('field_name')
@@ -723,7 +723,7 @@ async function handleEditField(selectInteraction, rootInteraction, state) {
             );
 
         const editValueLabel = new LabelBuilder()
-            .setLabel('Mezo erteke')
+            .setLabel('Field Value')
             .setTextInputComponent(
                 new TextInputBuilder()
                     .setCustomId('field_value')
@@ -737,19 +737,19 @@ async function handleEditField(selectInteraction, rootInteraction, state) {
             .setCustomId('field_inline')
             .setRequired(false)
             .addOptions([
-                { label: 'Nem — teljes szelesseg', value: 'no' },
-                { label: 'Igen — egymas melle', value: 'yes' },
+                { label: 'No — full width', value: 'no' },
+                { label: 'Yes — side-by-side', value: 'yes' },
             ]);
         
         if (field.inline) {
             editInlineRadio.setOptions([
-                { label: 'Nem — teljes szelesseg', value: 'no' },
-                { label: 'Igen — egymas melle', value: 'yes', default: true },
+                { label: 'No — full width', value: 'no' },
+                { label: 'Yes — side-by-side', value: 'yes', default: true },
             ]);
         }
 
         const editInlineLabel = new LabelBuilder()
-            .setLabel('Egymas melle rendezes (inline)?')
+            .setLabel('Display inline?')
             .setRadioGroupComponent(editInlineRadio);
 
         modal.addLabelComponents(editNameLabel, editValueLabel, editInlineLabel);
@@ -786,7 +786,7 @@ async function handleRemoveField(selectInteraction, rootInteraction, state) {
 
     const pickSelect = new StringSelectMenuBuilder()
         .setCustomId('eb_remove_field_pick')
-        .setPlaceholder('Valassz ki egy mezot az eltavolitashoz...')
+        .setPlaceholder('Select a field to remove...')
         .addOptions(
             state.fields.slice(0, 25).map((f, i) =>
                 new StringSelectMenuOptionBuilder()
@@ -802,8 +802,8 @@ async function handleRemoveField(selectInteraction, rootInteraction, state) {
     await selectInteraction.followUp({
         embeds: [
             new EmbedBuilder()
-                .setTitle('Mezo eltavolitasa')
-                .setDescription('Valassz ki egy mezot a torleshez.')
+                .setTitle('Remove Field')
+                .setDescription('Select the field you want to delete.')
                 .setColor(getColor('warning')),
         ],
         components: [new ActionRowBuilder().addComponents(pickSelect)],
@@ -831,7 +831,7 @@ async function handleReorderFields(selectInteraction, rootInteraction, state) {
 
     const pickSelect = new StringSelectMenuBuilder()
         .setCustomId('eb_reorder_pick')
-        .setPlaceholder('Valassz ki egy mezot a mozgatashoz...')
+        .setPlaceholder('Select a field to move...')
         .addOptions(
             state.fields.slice(0, 25).map((f, i) =>
                 new StringSelectMenuOptionBuilder()
@@ -847,8 +847,8 @@ async function handleReorderFields(selectInteraction, rootInteraction, state) {
     await selectInteraction.followUp({
         embeds: [
             new EmbedBuilder()
-                .setTitle('Mezok sorrendje')
-                .setDescription('Valassz ki egy mezot, majd a nyilak segitsegevel mogasd fel vagy le.')
+                .setTitle('Reorder Fields')
+                .setDescription('Select a field, then use the arrows to move it up or down.')
                 .setColor(getColor('info')),
         ],
         components: [new ActionRowBuilder().addComponents(pickSelect)],
@@ -869,29 +869,29 @@ async function handleReorderFields(selectInteraction, rootInteraction, state) {
 
         const upBtn = new ButtonBuilder()
             .setCustomId('eb_reorder_up')
-            .setLabel('Mozgatas fel')
+            .setLabel('Move Up')
             .setStyle(ButtonStyle.Primary)
             .setEmoji('⬆️')
             .setDisabled(sourceIdx === 0);
 
         const downBtn = new ButtonBuilder()
             .setCustomId('eb_reorder_down')
-            .setLabel('Mozgatas le')
+            .setLabel('Move Down')
             .setStyle(ButtonStyle.Primary)
             .setEmoji('⬇️')
             .setDisabled(sourceIdx === state.fields.length - 1);
 
         const cancelBtn = new ButtonBuilder()
             .setCustomId('eb_reorder_cancel')
-            .setLabel('Megse')
+            .setLabel('Cancel')
             .setStyle(ButtonStyle.Secondary);
 
         await pickInter.followUp({
             embeds: [
                 new EmbedBuilder()
-                    .setTitle('Mezo mozgatasa')
+                    .setTitle('Move Field')
                     .setDescription(
-                        `A(z) **${state.fields[sourceIdx].name}** mozgatasa — jelenleg a(z) **${sourceIdx + 1}** pozicioban a(z) **${state.fields.length}** kozul.`,
+                        `Moving **${state.fields[sourceIdx].name}** — currently at position **${sourceIdx + 1}** of **${state.fields.length}**.`,
                     )
                     .setColor(getColor('info')),
             ],
@@ -936,7 +936,7 @@ async function handlePostEmbed(selectInteraction, rootInteraction, state, guild)
         await selectInteraction.deferUpdate();
         await replyUserError(selectInteraction, {
             type: ErrorTypes.VALIDATION,
-            message: 'Kuldes elott adj meg legalabb egy cimet, leirast vagy mezot.',
+            message: 'Add at least a title, description, or field before posting.',
         });
         return;
     }
@@ -945,14 +945,14 @@ async function handlePostEmbed(selectInteraction, rootInteraction, state, guild)
 
     const chanSelect = new ChannelSelectMenuBuilder()
         .setCustomId('eb_post_channel')
-        .setPlaceholder('Valassz csatornat...')
+        .setPlaceholder('Select a channel...')
         .addChannelTypes(ChannelType.GuildText, ChannelType.GuildAnnouncement);
 
     await selectInteraction.followUp({
         embeds: [
             new EmbedBuilder()
-                .setTitle('Embed kuldese')
-                .setDescription('Valassz csatornat, ahova az embed elkuldesre kerul.')
+                .setTitle('Post Embed')
+                .setDescription('Select the channel where this embed will be sent.')
                 .setColor(getColor('info')),
         ],
         components: [new ActionRowBuilder().addComponents(chanSelect)],
@@ -974,7 +974,7 @@ async function handlePostEmbed(selectInteraction, rootInteraction, state, guild)
         if (!channel) {
             await replyUserError(chanInter, {
                 type: ErrorTypes.USER_INPUT,
-                message: 'Nem sikerult feloldani a kivalasztott csatornat.',
+                message: 'Could not resolve the selected channel.',
             });
             return;
         }
@@ -983,21 +983,21 @@ async function handlePostEmbed(selectInteraction, rootInteraction, state, guild)
         if (!perms?.has([PermissionFlagsBits.SendMessages, PermissionFlagsBits.EmbedLinks])) {
             await replyUserError(chanInter, {
                 type: ErrorTypes.PERMISSION,
-                message: `Szuksegem van a **Uzenetek kuldese** es **Linkek beagyazasa** jogosultsagokra a(z) ${channel} csatornaban.`,
+                message: `I need **Send Messages** and **Embed Links** permissions in ${channel} to post there.`,
             });
             return;
         }
 
         const finalEmbed = buildPreviewEmbed(state);
 
-        if (finalEmbed.data.description === '*(Ures — hasznald az alabbi menut a tartalom hozzaadasahoz)*') {
+        if (finalEmbed.data.description === '*(Empty — use the menu below to add content)*') {
             finalEmbed.setDescription(null);
         }
 
         await channel.send({ embeds: [finalEmbed] });
 
         await chanInter.followUp({
-            embeds: [successEmbed('Embed Elkuldve', `Az embeded sikeresen elkuldve a(z) ${channel} csatornaba.`)],
+            embeds: [successEmbed('Embed Sent', `Your embed has been posted to ${channel}.`)],
             flags: MessageFlags.Ephemeral,
         });
     });
@@ -1024,7 +1024,7 @@ async function handleJsonExport(selectInteraction, rootInteraction, state) {
             embeds: [
                 new EmbedBuilder()
                     .setTitle('Embed JSON')
-                    .setDescription('A JSON tul hosszu az inline megjeleniteshez — lasd a csatolt fajlt.')
+                    .setDescription('The JSON is too long to display inline — see the attached file.')
                     .setColor(getColor('info')),
             ],
             files: [
@@ -1042,7 +1042,7 @@ export default {
     slashOnly: true,
     data: new SlashCommandBuilder()
         .setName('embedbuilder')
-        .setDescription('Epits es kuldj el egy teljesen egyedi embedet elo elonezettel')
+        .setDescription('Build and post a fully custom embed with live preview')
         .setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages),
 
     async execute(interaction) {

@@ -8,11 +8,11 @@ import { InteractionHelper } from '../../utils/interactionHelper.js';
 export default {
     data: new SlashCommandBuilder()
         .setName('balance')
-        .setDescription("Sajat vagy mas felhasznalo egyenlegenek ellenorzese")
+        .setDescription("Check your or someone else's balance")
         .addUserOption(option =>
             option
                 .setName('user')
-                .setDescription('A felhasznalo, akinek az egyenlegere kivancsi vagy')
+                .setDescription('User to check balance for')
                 .setRequired(false)
         ),
 
@@ -32,7 +32,7 @@ export default {
             throw createError(
                 "Bot user queried for balance",
                 ErrorTypes.VALIDATION,
-                "A botok nem rendelkeznek gazdasagi egyenleggel."
+                "Bots don't have an economy balance."
             );
         }
 
@@ -44,7 +44,7 @@ export default {
             throw createError(
                 "Failed to load economy data",
                 ErrorTypes.DATABASE,
-                "Nem sikerult betolteni a gazdasagi adatokat. Kerlek probald ujra kesobb.",
+                "Failed to load economy data. Please try again later.",
                 { userId: targetUser.id, guildId }
             );
         }
@@ -55,12 +55,12 @@ export default {
         const bank = typeof userData.bank === 'number' ? userData.bank : 0;
 
             const embed = createEmbed({
-                title: `${targetUser.username} egyenlege`,
-                description: `Itt talalhato ${targetUser.username} jelenlegi penzugyi helyzete.`,
+                title: `${targetUser.username}'s Balance`,
+                description: `Here is the current financial status for ${targetUser.username}.`,
             })
                 .addFields(
                     {
-                        name: "💵 Keszpenz",
+                        name: "💵 Cash",
                         value: `$${wallet.toLocaleString()}`,
                         inline: true,
                     },
@@ -70,13 +70,13 @@ export default {
                         inline: true,
                     },
                     {
-                        name: "💰 Osszesen",
+                        name: "💰 Total",
                         value: `$${(wallet + bank).toLocaleString()}`,
                         inline: true,
                     }
                 )
                 .setFooter({
-                    text: `Lekerte: ${interaction.user.tag}`,
+                    text: `Requested by ${interaction.user.tag}`,
                     iconURL: interaction.user.displayAvatarURL(),
                 });
 

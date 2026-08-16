@@ -13,8 +13,8 @@ export default {
         if (next5.length === 0) {
             const embed = new EmbedBuilder()
                 .setColor(0xFF0000)
-                .setTitle('Nem talalhato szuletesnap')
-                .setDescription('Meg nem allitottak be szuletesnapot ezen a szerveren. Hasznald a `/birthday set` parancsot!');
+                .setTitle('No Birthdays Found')
+                .setDescription('No birthdays have been set up in this server yet. Use `/birthday set` to add birthdays!');
             return await InteractionHelper.safeEditReply(interaction, {
                 embeds: [embed]
             });
@@ -31,25 +31,25 @@ export default {
 
             let timeUntil = '';
             if (birthday.daysUntil === 0) {
-                timeUntil = '🎉 **Ma!**';
+                timeUntil = '🎉 **Today!**';
             } else if (birthday.daysUntil === 1) {
-                timeUntil = '📅 **Holnap!**';
+                timeUntil = '📅 **Tomorrow!**';
             } else {
-                timeUntil = `${birthday.daysUntil} nap mulva`;
+                timeUntil = `In ${birthday.daysUntil} day${birthday.daysUntil > 1 ? 's' : ''}`;
             }
         }
 
         if (displayIndex === 0) {
             const embed = new EmbedBuilder()
                 .setColor(0xFF0000)
-                .setTitle('Nincsenek szuletesnapok')
-                .setDescription('Nincsenek szuletesnapok a szerver jelenlegi tagjai kozott.');
+                .setTitle('No Upcoming Birthdays')
+                .setDescription('No upcoming birthdays found for current server members.');
             return await InteractionHelper.safeEditReply(interaction, {
                 embeds: [embed]
             });
         }
 
-        let birthdayList = `🎂 **Kovetkezo 5 szuletesnap**\n\nIme a kovetkezo 5 szuletesnap a(z) ${interaction.guild.name} szerveren:\n\n`;
+        let birthdayList = `🎂 **Next 5 Upcoming Birthdays**\n\nHere are the next 5 birthdays in ${interaction.guild.name}:\n\n`;
         displayIndex = 0;
         for (const birthday of next5) {
             const member = await interaction.guild.members.fetch(birthday.userId).catch(() => null);
@@ -60,21 +60,21 @@ export default {
 
             let timeUntil = '';
             if (birthday.daysUntil === 0) {
-                timeUntil = '🎉 **Ma!**';
+                timeUntil = '🎉 **Today!**';
             } else if (birthday.daysUntil === 1) {
-                timeUntil = '📅 **Holnap!**';
+                timeUntil = '📅 **Tomorrow!**';
             } else {
-                timeUntil = `${birthday.daysUntil} nap mulva`;
+                timeUntil = `In ${birthday.daysUntil} day${birthday.daysUntil > 1 ? 's' : ''}`;
             }
 
-            birthdayList += `${displayIndex}. **${member.displayName}**\n<@${birthday.userId}>\n📅 **Datum:** ${birthday.monthName} ${birthday.day}\n⏰ **Idopont:** ${timeUntil}\n\n`;
+            birthdayList += `${displayIndex}. **${member.displayName}**\n<@${birthday.userId}>\n📅 **Date:** ${birthday.monthName} ${birthday.day}\n⏰ **Time:** ${timeUntil}\n\n`;
         }
 
-        birthdayList += `Hasznald a /birthday set parancsot a szuletesnapod megadasahoz!`;
+        birthdayList += `Use /birthday set to add your birthday!`;
 
         const embed = new EmbedBuilder()
             .setColor(0x00FF00)
-            .setTitle('Kovetkezo 5 szuletesnap')
+            .setTitle('Next 5 Upcoming Birthdays')
             .setDescription(birthdayList);
 
         await InteractionHelper.safeEditReply(interaction, {

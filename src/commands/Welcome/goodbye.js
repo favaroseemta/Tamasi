@@ -9,28 +9,28 @@ import { ErrorTypes, replyUserError } from '../../utils/errorHandler.js';
 export default {
     data: new SlashCommandBuilder()
         .setName('goodbye')
-        .setDescription('A bucsuzo uzenet rendszer konfiguralasa')
+        .setDescription('Configure the goodbye message system')
         .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
         .addSubcommand(subcommand =>
             subcommand
                 .setName('setup')
-                .setDescription('A bucsuzo uzenet beallitasa')
+                .setDescription('Set up the goodbye message')
                 .addChannelOption(option =>
                     option.setName('channel')
-                        .setDescription('A csatorna, ahova a bucsuzo uzenetek erkeznek')
+                        .setDescription('The channel to send goodbye messages to')
                         .addChannelTypes(ChannelType.GuildText)
                         .setRequired(true))
                 .addStringOption(option =>
                     option.setName('message')
-                        .setDescription('Bucsuzo uzenet. Valtozok: {user}, {username}, {server}, {memberCount}')
+                        .setDescription('Goodbye message. Variables: {user}, {username}, {server}, {memberCount}')
                         .setRequired(true))
                 .addStringOption(option =>
                     option.setName('image')
-                        .setDescription('A bucsuzo uzenetben megjelenitendo kep URL-je')
+                        .setDescription('URL of the image to include in the goodbye message')
                         .setRequired(false))
                 .addBooleanOption(option =>
                     option.setName('ping')
-                        .setDescription('Meg legyen-e emlitve a felhasznalo a bucsuzo uzenetben')
+                        .setDescription('Whether to ping the user in the goodbye message')
                         .setRequired(false))),
 
     async execute(interaction) {
@@ -47,7 +47,7 @@ export default {
         const { options, guild, client } = interaction;
 
         if (!interaction.memberPermissions?.has(PermissionFlagsBits.ManageGuild)) {
-            return await replyUserError(interaction, { type: ErrorTypes.PERMISSION, message: 'A `/goodbye` parancs hasznalatahoz **Szerver kezelese** jogosultsag szukseges.' });
+            return await replyUserError(interaction, { type: ErrorTypes.PERMISSION, message: 'You need the **Manage Server** permission to use `/goodbye`.' });
         }
 
         const subcommand = options.getSubcommand();
@@ -61,12 +61,12 @@ export default {
             const existingConfig = await getWelcomeConfig(client, guild.id);
             if (existingConfig?.goodbyeChannelId) {
                 logger.info(`[Goodbye] Setup blocked because config already exists in channel ${existingConfig.goodbyeChannelId} for guild ${guild.id}`);
-                return await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: `A bucsuzas mar be van allitva a(z) <#${existingConfig.goodbyeChannelId}> csatornaban. Hasznald a **/greet dashboard** parancsot a beallitasok testreszabasahoz.` });
+                return await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: `Goodbye is already configured for <#${existingConfig.goodbyeChannelId}>. Use **/greet dashboard** to customize channel, message, ping, or image.` });
             }
 
             if (!message || message.trim().length === 0) {
                 logger.warn(`[Goodbye] Empty message provided by ${interaction.user.tag} in ${guild.name}`);
-                return await replyUserError(interaction, { type: ErrorTypes.VALIDATION, message: 'A bucsuzo uzenet nem lehet ures' });
+                return await replyUserError(interaction, { type: ErrorTypes.VALIDATION, message: 'Goodbye message cannot be empty' });
             }
 
             if (image) {
@@ -74,7 +74,7 @@ export default {
                     new URL(image);
                 } catch (e) {
                     logger.warn(`[Goodbye] Invalid image URL provided by ${interaction.user.tag}: ${image}`);
-                    return await replyUserError(interaction, { type: ErrorTypes.VALIDATION, message: 'Kerlek adj meg egy ervenyes kep URL-t (http:// vagy https:// szoveggel kell kezdodnie)' });
+                    return await replyUserError(interaction, { type: ErrorTypes.VALIDATION, message: 'Please provide a valid image URL (must start with http:// or https://' });
                 }
             }
 
@@ -85,10 +85,10 @@ export default {
                     leaveMessage: message,
                     goodbyePing: ping,
                     leaveEmbed: {
-                        title: "Viszontlatasra {user.tag}",
+                        title: "Goodbye {user.tag}",
                         description: message,
                         color: getColor('error'),
-                        footer: `Bucsu a(z) ${guild.name} szerverrol!`,
+                        footer: `Goodbye from ${guild.name}!`,
                         ...(image && { image: { url: image } })
                     }
                 });
@@ -102,14 +102,14 @@ export default {
 
                 const embed = new EmbedBuilder()
                     .setColor(getColor('success'))
-                    .setTitle('Bucsuzo Rendszer Beallitva')
-                    .setDescription(`A bucsuzo uzenetek ezentul a(z) ${channel} csatornaba erkeznek`)
+                    .setTitle('Goodbye System Configured')
+                    .setDescription(`Goodbye messages will now be sent to ${channel}`)
                     .addFields(
-                        { name: 'Uzenet elonezet', value: truncateForEmbedField(previewMessage) },
-                        { name: 'Felhasznalo megemlitese', value: ping ? 'Igen' : 'Nem' },
-                        { name: 'Statusz', value: 'Engedelyezve' }
+                        { name: 'Message Preview', value: truncateForEmbedField(previewMessage) },
+                        { name: 'Ping User', value: ping ? 'Yes' : 'No' },
+                        { name: 'Status', value: 'Enabled' }
                     )
-                    .setFooter({ text: 'Tipp: Hasznald a /greet dashboard parancsot a bucsuzasi beallitasok testreszabasahoz' });
+                    .setFooter({ text: 'Tip: Use /greet dashboard to customize goodbye settings' });
 
                 if (image) {
                     embed.setImage(image);
@@ -118,7 +118,7 @@ export default {
                 await InteractionHelper.safeEditReply(interaction, { embeds: [embed] });
             } catch (error) {
                 logger.error(`[Goodbye] Failed to setup goodbye system for guild ${guild.id}:`, error);
-                await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'Hiba tortent a bucsuzo rendszer konfiguralasa kozben. Kerlek probald ujra.' });
+                await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'An error occurred while configuring the goodbye system. Please try again.' });
             }
         }
     },

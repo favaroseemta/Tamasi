@@ -122,7 +122,7 @@ export async function checkModerationPermissions(
   interaction,
   guildConfig,
   requiredPermissions,
-  errorMessage = 'Nincs jogosultsagod a parancs hasznalatahoz.'
+  errorMessage = 'You do not have permission to use this command.'
 ) {
   if (memberHasModerationCommandAccess(interaction.member, guildConfig, requiredPermissions)) {
     return true;
@@ -218,7 +218,7 @@ export function botHasPermission(channel, permissions) {
 export async function checkUserPermissions(
   interaction,
   requiredPermissions,
-  errorMessage = 'Nincs jogosultsagod a parancs hasznalatahoz.'
+  errorMessage = 'You do not have permission to use this command.'
 ) {
   const member = interaction.member;
 
@@ -248,7 +248,7 @@ export async function checkBotPermissions(
   if (!targetChannel || !targetChannel.guild) {
     await replyUserError(interaction, {
       type: ErrorTypes.UNKNOWN,
-      message: 'Nem sikerult meghatarozni a csatornat.',
+      message: 'Could not determine channel.',
       context: { source: 'permissionGuard.checkBotPermissions' }
     });
     return false;
@@ -258,7 +258,7 @@ export async function checkBotPermissions(
   if (!botMember) {
     await replyUserError(interaction, {
       type: ErrorTypes.UNKNOWN,
-      message: 'Nem talalhato a bot tag ebben a szerverben.',
+      message: 'Could not find bot member in this guild.',
       context: { source: 'permissionGuard.checkBotPermissions' }
     });
     return false;
@@ -277,7 +277,7 @@ export async function checkBotPermissions(
   if (missingPerms.length > 0) {
     await replyUserError(interaction, {
       type: ErrorTypes.PERMISSION,
-      message: `A botnak a kovetkezo jogosultsagokra van szuksege a(z) ${targetChannel} csatornaban: ${missingPerms.join(', ')}`,
+      message: `I need the following permissions in ${targetChannel}: ${missingPerms.join(', ')}`,
       context: { source: 'permissionGuard.checkBotPermissions', subtype: 'bot_permission' }
     });
 

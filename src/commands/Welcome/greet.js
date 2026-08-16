@@ -8,18 +8,18 @@ export default {
     slashOnly: true,
     data: new SlashCommandBuilder()
         .setName('greet')
-        .setDescription('Udvozles es bucsuzas beallitasainak kezelese')
+        .setDescription('Manage welcome & goodbye settings')
         .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
         .addSubcommand(subcommand =>
             subcommand
                 .setName('dashboard')
-                .setDescription('Az udvozles es bucsuzas beallitasi vezerlopultjanak megnyitasa'),
+                .setDescription('Open the welcome & goodbye configuration dashboard'),
         ),
 
     async execute(interaction, config, client) {
         try {
             if (!interaction.memberPermissions?.has(PermissionFlagsBits.ManageGuild)) {
-                return await replyUserError(interaction, { type: ErrorTypes.PERMISSION, message: 'A `/greet` parancs hasznalatahoz **Szerver kezelese** jogosultsag szukseges.' });
+                return await replyUserError(interaction, { type: ErrorTypes.PERMISSION, message: 'You need the **Manage Server** permission to use `/greet`.' });
             }
 
             const subcommand = interaction.options.getSubcommand();
@@ -32,7 +32,7 @@ export default {
             }
         } catch (error) {
             if (error instanceof TitanBotError) {
-                return await replyUserError(interaction, { type: ErrorTypes.CONFIGURATION, message: error.userMessage || 'Valami hiba tortent.' });
+                return await replyUserError(interaction, { type: ErrorTypes.CONFIGURATION, message: error.userMessage || 'Something went wrong.' });
             }
             await handleInteractionError(interaction, error, { command: 'greet' });
         }

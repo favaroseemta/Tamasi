@@ -13,15 +13,15 @@ import { InteractionHelper } from '../../utils/interactionHelper.js';
 export default {
     data: new SlashCommandBuilder()
         .setName('birthday')
-        .setDescription('Szuletesnapi rendszer parancsai')
+        .setDescription('Birthday system commands')
         .addSubcommand(subcommand =>
             subcommand
                 .setName('set')
-                .setDescription('Szuletesnapod beallitasa')
+                .setDescription('Set your birthday')
                 .addIntegerOption(option =>
                     option
                         .setName('month')
-                        .setDescription('Szuletesi honap (1-12)')
+                        .setDescription('Birth month (1-12)')
                         .setRequired(true)
                         .setMinValue(1)
                         .setMaxValue(12)
@@ -29,7 +29,7 @@ export default {
                 .addIntegerOption(option =>
                     option
                         .setName('day')
-                        .setDescription('Szuletesi nap (1-31)')
+                        .setDescription('Birth day (1-31)')
                         .setRequired(true)
                         .setMinValue(1)
                         .setMaxValue(31)
@@ -38,37 +38,37 @@ export default {
         .addSubcommand(subcommand =>
             subcommand
                 .setName('info')
-                .setDescription('Szuletesnapi informaciok megtekintese')
+                .setDescription('View birthday information')
                 .addUserOption(option =>
                     option
                         .setName('user')
-                        .setDescription('A felhasznalo akinek a szuletesnapjat ellenorizni akarod')
+                        .setDescription('User to check birthday for')
                         .setRequired(false)
                 )
         )
         .addSubcommand(subcommand =>
             subcommand
                 .setName('list')
-                .setDescription('Szerver szuletesnapjainak listazasa')
+                .setDescription('List all birthdays in the server')
         )
         .addSubcommand(subcommand =>
             subcommand
                 .setName('remove')
-                .setDescription('Szuletesnapod eltavolitasa')
+                .setDescription('Remove your birthday')
         )
         .addSubcommand(subcommand =>
             subcommand
                 .setName('next')
-                .setDescription('Kovetkezo szuletesnapok megjelenitese')
+                .setDescription('Show upcoming birthdays')
         )
         .addSubcommand(subcommand =>
             subcommand
                 .setName('setchannel')
-                .setDescription('Szuletesnapi bejelentesek csatornjanak beallitasa (Szerver kezelese joga szukseges)')
+                .setDescription('Set or disable the channel for birthday announcements. (Manage Server required)')
                 .addChannelOption(option =>
                     option
                         .setName('channel')
-                        .setDescription('Szoveges csatorna a bejelentesekhez. Hagyja uresen a kikapcsolashoz.')
+                        .setDescription('The text channel for announcements. Leave empty to disable.')
                         .addChannelTypes(ChannelType.GuildText)
                         .setRequired(false)
                 )

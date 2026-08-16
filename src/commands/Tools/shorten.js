@@ -8,17 +8,17 @@ import { InteractionHelper } from '../../utils/interactionHelper.js';
 export default {
     data: new SlashCommandBuilder()
         .setName("shorten")
-        .setDescription("URL rovidites is.gd segitsegevel")
+        .setDescription("Shorten a URL using is.gd")
         .addStringOption(option =>
             option
                 .setName("url")
-                .setDescription("A roviditendo URL")
+                .setDescription("The URL to shorten")
                 .setRequired(true)
         )
         .addStringOption(option =>
             option
                 .setName("custom")
-                .setDescription("Egyedi URL vegzodes (opcionalis)")
+                .setDescription("Custom URL ending (optional)")
                 .setRequired(false)
         )
         .setDMPermission(false),
@@ -45,14 +45,14 @@ export default {
         } catch (e) {
             return replyUserError(interaction, {
                 type: ErrorTypes.VALIDATION,
-                message: 'Ervenytelen URL formatum. Tartalmaznia kell a http:// vagy https:// elotagokat.',
+                message: 'Invalid URL format. Include http:// or https://',
             });
         }
 
         if (custom && !/^[a-zA-Z0-9_-]+$/.test(custom)) {
             return replyUserError(interaction, {
                 type: ErrorTypes.VALIDATION,
-                message: 'Az egyedi URL csak betuket, szamokat, alulvonasokat es kotojeleket tartalmazhat.',
+                message: 'Custom URL can only contain letters, numbers, underscores, and hyphens.',
             });
         }
 
@@ -74,8 +74,8 @@ export default {
             });
         } catch (networkError) {
             const message = networkError?.name === 'AbortError'
-                ? 'A linkrovidito idotullepest erte el. Kerlek probald ujra egy pillanat mulva.'
-                : 'Jelenleg nem erheto el a linkrovidito szolgaltatas. Kerlek probald ujra kesobb.';
+                ? 'The URL shortener timed out. Please try again in a moment.'
+                : 'Unable to reach the URL shortener service right now. Please try again later.';
             return replyUserError(interaction, {
                 type: ErrorTypes.NETWORK,
                 message,
@@ -87,7 +87,7 @@ export default {
         if (!response.ok) {
             return replyUserError(interaction, {
                 type: ErrorTypes.UNKNOWN,
-                message: `A linkrovidito szolgaltatas HTTP ${response.status} hibat kuldott. Kerlek probald ujra kesobb.`,
+                message: `Shortener service returned HTTP ${response.status}. Please try again later.`,
             });
         }
 
@@ -99,21 +99,21 @@ export default {
             if (shortUrl.includes("already exists")) {
                 return replyUserError(interaction, {
                     type: ErrorTypes.VALIDATION,
-                    message: 'Ez az egyedi URL mar foglalt. Probalj egy masikat.',
+                    message: 'That custom URL is already taken. Try a different one.',
                 });
             } else if (shortUrl.includes("invalid")) {
                 return replyUserError(interaction, {
                     type: ErrorTypes.VALIDATION,
-                    message: 'Ervenytelen URL. Tartalmaznia kell a http:// vagy https:// elotagokat.',
+                    message: 'Invalid URL. Include http:// or https://',
                 });
             }
             return replyUserError(interaction, {
                 type: ErrorTypes.UNKNOWN,
-                message: `URL rovidites sikertelen: ${shortUrl}`,
+                message: `URL shortening failed: ${shortUrl}`,
             });
         }
 
-        const embed = successEmbed('URL Leroviditve', `Ime a leroviditett URL: ${shortUrl}`);
+        const embed = successEmbed('URL Shortened', `Here's your shortened URL: ${shortUrl}`);
         embed.setColor(getColor('success'));
         await InteractionHelper.safeEditReply(interaction, {
             embeds: [embed],

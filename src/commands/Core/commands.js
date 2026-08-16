@@ -38,7 +38,7 @@ function buildCategoryChoices(client) {
 
 async function ensureManageGuild(interaction) {
   if (!interaction.memberPermissions?.has(PermissionFlagsBits.ManageGuild)) {
-    await replyUserError(interaction, { type: ErrorTypes.PERMISSION, message: 'A parancsok kezelesehez **Szerver kezelese** jogosultsag szukseges.' });
+    await replyUserError(interaction, { type: ErrorTypes.PERMISSION, message: 'You need the **Manage Server** permission to manage commands.' });
     return false;
   }
 
@@ -48,32 +48,32 @@ async function ensureManageGuild(interaction) {
 export default {
   data: new SlashCommandBuilder()
     .setName('commands')
-    .setDescription('Engedelyezi vagy tiltja a bot parancsait es kategoriait a szerveren')
+    .setDescription('Enable or disable bot commands and categories for this server')
     .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
     .setDMPermission(false)
     .addSubcommand((subcommand) =>
       subcommand
         .setName('dashboard')
-        .setDescription('Nyisd meg az interaktiv parancs hozzaferesi dashboardot'),
+        .setDescription('Open the interactive command access dashboard'),
     )
     .addSubcommand((subcommand) =>
       subcommand
         .setName('disable')
-        .setDescription('Parancs vagy egesz kategoria tiltasa')
+        .setDescription('Disable a command or entire category')
         .addStringOption((option) =>
           option
             .setName('scope')
-            .setDescription('Egyetlen parancs vagy egesz kategoria tiltasa')
+            .setDescription('Disable a single command or a whole category')
             .setRequired(true)
             .addChoices(
-              { name: 'Kategoria', value: 'category' },
-              { name: 'Parancs', value: 'command' },
+              { name: 'Category', value: 'category' },
+              { name: 'Command', value: 'command' },
             ),
         )
         .addStringOption((option) =>
           option
             .setName('target')
-            .setDescription('Kategoria vagy parancs neve')
+            .setDescription('Category or command name')
             .setRequired(true)
             .setAutocomplete(true),
         ),
@@ -81,21 +81,21 @@ export default {
     .addSubcommand((subcommand) =>
       subcommand
         .setName('enable')
-        .setDescription('Parancs vagy egesz kategoria engedelyezese')
+        .setDescription('Enable a command or entire category')
         .addStringOption((option) =>
           option
             .setName('scope')
-            .setDescription('Egyetlen parancs vagy egesz kategoria engedelyezese')
+            .setDescription('Enable a single command or a whole category')
             .setRequired(true)
             .addChoices(
-              { name: 'Kategoria', value: 'category' },
-              { name: 'Parancs', value: 'command' },
+              { name: 'Category', value: 'category' },
+              { name: 'Command', value: 'command' },
             ),
         )
         .addStringOption((option) =>
           option
             .setName('target')
-            .setDescription('Kategoria vagy parancs neve')
+            .setDescription('Category or command name')
             .setRequired(true)
             .setAutocomplete(true),
         ),
@@ -196,7 +196,7 @@ export default {
           });
           await replyUserError(componentInteraction, {
             type: ErrorTypes.UNKNOWN,
-            message: error.message || 'Nem sikerult frissiteni a parancs hozzaferest.',
+            message: error.message || 'Failed to update command access.',
           }).catch(() => {});
         }
       });
@@ -227,7 +227,7 @@ export default {
     if (scope === 'category') {
       const category = resolveCategoryChoice(client, target);
       if (!category) {
-        return await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: `Nem talalhato kategoria a kovetkezo kifejezesre: \`${target}\`. Hasznald a \`/commands dashboard\` parancsot a kategoriak bongeszesere.` });
+        return await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: `No category matched \`${target}\`. Use \`/commands dashboard\` to browse categories.` });
       }
 
       if (isDisable) {
@@ -235,8 +235,8 @@ export default {
         return InteractionHelper.safeEditReply(interaction, {
           embeds: [
             successEmbed(
-              'Kategoria tiltva',
-              `A(z) **${category.displayName}** kategoria osszes parancsa tiltva lett.\nA vedett parancsok tovabbra is elerhetoek.`,
+              'Category Disabled',
+              `All **${category.displayName}** commands are now disabled.\nProtected commands remain available.`,
             ),
           ],
         });
@@ -244,7 +244,7 @@ export default {
 
       await enableCategory(client, interaction.guildId, category.key);
       return InteractionHelper.safeEditReply(interaction, {
-        embeds: [successEmbed('Kategoria engedelyezve', `A(z) **${category.displayName}** kategoria parancsai engedelyezve lettek.`)],
+        embeds: [successEmbed('Category Enabled', `**${category.displayName}** commands are now enabled (except individually disabled commands).`)],
       });
     }
 
@@ -252,13 +252,13 @@ export default {
     if (isDisable) {
       await disableCommand(client, interaction.guildId, commandName);
       return InteractionHelper.safeEditReply(interaction, {
-        embeds: [successEmbed('Parancs tiltva', `A(z) \`/${commandName}\` parancs tiltva lett ezen a szerveren.`)],
+        embeds: [successEmbed('Command Disabled', `\`/${commandName}\` is now disabled in this server.`)],
       });
     }
 
     await enableCommand(client, interaction.guildId, commandName);
     return InteractionHelper.safeEditReply(interaction, {
-      embeds: [successEmbed('Parancs engedelyezve', `A(z) \`/${commandName}\` parancs engedelyezve lett ezen a szerveren.`)],
+      embeds: [successEmbed('Command Enabled', `\`/${commandName}\` is now enabled in this server.`)],
     });
   },
 };

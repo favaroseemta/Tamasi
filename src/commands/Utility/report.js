@@ -8,22 +8,22 @@ import reportSetchannel from './modules/report_setchannel.js';
 export default {
     data: new SlashCommandBuilder()
         .setName('report')
-        .setDescription('Felhasznalo jelentese a moderatoroknak, vagy a jelentesi csatorna beallitasa.')
+        .setDescription('Report a user to server staff, or configure where reports are sent.')
         .setDMPermission(false)
         .addSubcommand(subcommand =>
             subcommand
                 .setName('file')
-                .setDescription('Felhasznalo jelentese a szerver moderacios csapatanak.')
+                .setDescription('Report a user to the server moderation team.')
                 .addUserOption(option =>
                     option
                         .setName('user')
-                        .setDescription('A jelenteni kivant felhasznalo.')
+                        .setDescription('The user you want to report.')
                         .setRequired(true),
                 )
                 .addStringOption(option =>
                     option
                         .setName('reason')
-                        .setDescription('A jelentes indoka (reszletesen).')
+                        .setDescription('The reason for the report (be detailed).')
                         .setRequired(true)
                         .setMaxLength(500),
                 ),
@@ -31,11 +31,11 @@ export default {
         .addSubcommand(subcommand =>
             subcommand
                 .setName('setchannel')
-                .setDescription('A jelentesi csatorna beallitasa. (Szerver kezelese jogosultsag szukseges)')
+                .setDescription('Set the channel where user reports are sent. (Manage Server required)')
                 .addChannelOption(option =>
                     option
                         .setName('channel')
-                        .setDescription('A szoveges csatorna, amely megkapja a jelenteseket.')
+                        .setDescription('The text channel to receive reports.')
                         .addChannelTypes(ChannelType.GuildText)
                         .setRequired(true),
                 ),

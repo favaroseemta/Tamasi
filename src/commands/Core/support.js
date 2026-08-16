@@ -7,12 +7,12 @@ const SUPPORT_SERVER_URL = "https://discord.gg/QnWNz2dKCE";
 export default {
     data: new SlashCommandBuilder()
     .setName("support")
-    .setDescription("Hivatkozas a tamogatasi szerverre"),
+    .setDescription("Get link to the support server"),
 
   async execute(interaction) {
     try {
       const supportButton = new ButtonBuilder()
-        .setLabel("Csatlakozas a tamogatasi szerverhez")
+        .setLabel("Join Support Server")
         .setStyle(ButtonStyle.Link)
         .setURL(SUPPORT_SERVER_URL);
 
@@ -20,7 +20,7 @@ export default {
 
       await InteractionHelper.safeReply(interaction, {
         embeds: [
-          createEmbed({ title: "Segitsegre van szukseged?", description: "Csatlakozz a hivatalos tamogatasi szerverunkhoz segitsegerte, hibajelentesehez vagy funkcio javaslatokhoz." }),
+          createEmbed({ title: "Need Help?", description: "Join our official support server for assistance, report bugs, or suggest features. If you are customizing this bot, remember to change the link in the code!" }),
         ],
         components: [actionRow],
         flags: MessageFlags.Ephemeral,
@@ -30,7 +30,7 @@ export default {
       
       try {
         return await InteractionHelper.safeReply(interaction, {
-          embeds: [createEmbed({ title: 'Rendszerhiba', description: 'Nem sikerult megjeleniteni a tamogatasi informaciokat.', color: 'error' })],
+          embeds: [createEmbed({ title: 'System Error', description: 'Could not display support information.', color: 'error' })],
           flags: MessageFlags.Ephemeral,
         });
       } catch (replyError) {

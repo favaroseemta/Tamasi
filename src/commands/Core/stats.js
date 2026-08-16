@@ -6,7 +6,7 @@ import { InteractionHelper } from '../../utils/interactionHelper.js';
 export default {
     data: new SlashCommandBuilder()
     .setName("stats")
-    .setDescription("Bot statisztikak megtekintese"),
+    .setDescription("View bot statistics"),
 
   async execute(interaction) {
     try {
@@ -19,13 +19,13 @@ export default {
       );
       const nodeVersion = process.version;
 
-      const embed = createEmbed({ title: "Rendszerstatisztikak", description: "Valos ideju teljesitmenymutatok." }).addFields(
-        { name: "Szerverek", value: `${totalGuilds}`, inline: true },
-        { name: "Felhasznalok", value: `${totalMembers}`, inline: true },
+      const embed = createEmbed({ title: "System Statistics", description: "Real-time performance metrics." }).addFields(
+        { name: "Servers", value: `${totalGuilds}`, inline: true },
+        { name: "Users", value: `${totalMembers}`, inline: true },
         { name: "Node.js", value: `${nodeVersion}`, inline: true },
         { name: "Discord.js", value: `v${version}`, inline: true },
         {
-          name: "Memoriahasznalat",
+          name: "Memory Usage",
           value: `${(process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2)} MB`,
           inline: true,
         },
@@ -35,7 +35,7 @@ export default {
     } catch (error) {
       logger.error('Stats command error:', error);
       return InteractionHelper.safeEditReply(interaction, {
-        embeds: [createEmbed({ title: 'Rendszerhiba', description: 'Nem sikerult lekerni a rendszerstatisztikakat.', color: 'error' })],
+        embeds: [createEmbed({ title: 'System Error', description: 'Could not fetch system statistics.', color: 'error' })],
         flags: MessageFlags.Ephemeral,
       });
     }

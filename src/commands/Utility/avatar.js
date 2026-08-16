@@ -6,12 +6,12 @@ import { InteractionHelper } from '../../utils/interactionHelper.js';
 export default {
     data: new SlashCommandBuilder()
     .setName("avatar")
-    .setDescription("Felhasznalo avatarkepenek megjelenitese")
+    .setDescription("Display a user's avatar image")
     .addUserOption((option) =>
       option
         .setName("target")
         .setDescription(
-          "A felhasznalo, akinek az avatarat meg szeretned tekinteni (alapertelmezett: te)",
+          "The user whose avatar you want to see (defaults to you)",
         ),
     ),
 
@@ -20,8 +20,8 @@ export default {
     const avatarUrl = user.displayAvatarURL({ size: 2048, dynamic: true });
 
     const embed = createEmbed({ 
-      title: `${user.username} avatara`, 
-      description: `[Letoltesi link](${avatarUrl})` 
+      title: `${user.username}'s Avatar`, 
+      description: `[Download Link](${avatarUrl})` 
     })
       .setImage(avatarUrl);
 

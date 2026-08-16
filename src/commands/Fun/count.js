@@ -17,47 +17,47 @@ import { replyUserError, ErrorTypes } from '../../utils/errorHandler.js';
 export default {
   data: new SlashCommandBuilder()
     .setName('count')
-    .setDescription('A szerveri szamolo jatek kezelese')
+    .setDescription('Manage the server counting game')
     .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
     .setDMPermission(false)
     .addSubcommand((subcommand) =>
       subcommand
         .setName('setup')
-        .setDescription('Szamolo jatek inditasa egy szoveges csatornaban')
+        .setDescription('Start a counting game in a text channel')
         .addChannelOption((option) =>
           option
             .setName('channel')
-            .setDescription('A csatorna ahol a szamolas folyik')
+            .setDescription('The channel where counting will take place')
             .setRequired(true)
             .addChannelTypes(ChannelType.GuildText),
         )
         .addStringOption((option) =>
           option
             .setName('system')
-            .setDescription('A hasznando szamolasi rendszer')
+            .setDescription('The counting system to use')
             .setRequired(true)
             .addChoices(...getCountingSystemChoices()),
         ),
     )
     .addSubcommand((subcommand) =>
-      subcommand.setName('disable').setDescription('A szamolo jatek kikapcsolasa a szerveren'),
+      subcommand.setName('disable').setDescription('Disable the counting game for this server'),
     )
     .addSubcommand((subcommand) =>
-      subcommand.setName('status').setDescription('Jelenlegi szamolo jatek statusz megtekintese'),
+      subcommand.setName('status').setDescription('View current counting game status'),
     )
     .addSubcommand((subcommand) =>
       subcommand
         .setName('reset')
-        .setDescription('Jelenlegi szamolasi sorozat nullazasa')
+        .setDescription('Reset the current counting sequence')
         .addIntegerOption((option) =>
           option
             .setName('start')
-            .setDescription('A szam amitol az ujrainditas utan indul a szamolas')
+            .setDescription('The number to start at after reset')
             .setMinValue(1),
         ),
     )
     .addSubcommand((subcommand) =>
-      subcommand.setName('leaderboard').setDescription('Szamolo jatek ranglista megjelenitese'),
+      subcommand.setName('leaderboard').setDescription('Show the counting game leaderboard'),
     ),
   category: 'Fun',
 
@@ -70,7 +70,7 @@ export default {
       }
 
       if (!interaction.memberPermissions?.has(PermissionFlagsBits.ManageGuild)) {
-        return await replyUserError(interaction, { type: ErrorTypes.PERMISSION, message: 'A parancs hasznalatahoz **Szerver kezelese** jogosultsag szukseges.' });
+        return await replyUserError(interaction, { type: ErrorTypes.PERMISSION, message: 'You need the **Manage Server** permission to use this command.' });
       }
 
       const guildId = interaction.guildId;
@@ -81,19 +81,19 @@ export default {
         const channel = interaction.options.getChannel('channel');
         const system = interaction.options.getString('system');
         if (!channel || channel.type !== ChannelType.GuildText) {
-          return await replyUserError(interaction, { type: ErrorTypes.VALIDATION, message: 'Kerlek valassz egy szoveges csatornat a szamolo jatekhoz.' });
+          return await replyUserError(interaction, { type: ErrorTypes.VALIDATION, message: 'Please choose a text channel for the counting game.' });
         }
 
         if (config.enabled && config.channelId && config.channelId !== channel.id) {
-          return await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: `Ez a szerver mar rendelkezik aktiv szamolo csatornaval: <#${config.channelId}>. Eloszor kapcsold ki a jelenlegit, vagy hasznald a meglevo csatornat.` });
+          return await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: `This server already has an active counting channel configured: <#${config.channelId}>. Disable the current counting game first, or use that existing channel.` });
         }
 
         await activateCountingGame(interaction.client, guildId, channel.id, system);
         return await InteractionHelper.safeEditReply(interaction, {
           embeds: [
             successEmbed(
-              'Szamolo jatek engedelyezve',
-              `A szamolo jatek mar aktiv a(z) ${channel} csatornaban a **${getCountingSystemLabel(system)}** rendszerrel. A jatekosoknak **1**-tol felfele kell szamolniuk es nem kuldhetnek ket szamot egymas utan.`,
+              'Counting Game Enabled',
+              `The counting game is now active in ${channel} using the **${getCountingSystemLabel(system)}** system. Players must count up from **1** and may not post two numbers in a row.`,
             ),
           ],
         });
@@ -102,32 +102,32 @@ export default {
       if (subcommand === 'disable') {
         if (!config.enabled) {
           return await InteractionHelper.safeEditReply(interaction, {
-            embeds: [infoEmbed('Szamolo jatek kikapcsolva', 'A szamolo jatek mar ki van kapcsolva ezen a szerveren.')],
+            embeds: [infoEmbed('Counting Game Disabled', 'The counting game is already disabled for this server.')],
           });
         }
 
         await disableCountingGame(interaction.client, guildId);
         return await InteractionHelper.safeEditReply(interaction, {
-          embeds: [successEmbed('Szamolo jatek kikapcsolva', 'A szamolo jatek sikeresen ki lett kapcsolva.')],
+          embeds: [successEmbed('Counting Game Disabled', 'The counting game has been disabled.')],
         });
       }
 
       if (subcommand === 'status') {
         const fields = [
-          { name: 'Engedelyezve', value: config.enabled ? 'Igen' : 'Nem', inline: true },
-          { name: 'Csatorna', value: config.channelId ? `<#${config.channelId}>` : 'Nincs beallitva', inline: true },
-          { name: 'Rendszer', value: getCountingSystemLabel(config.system), inline: true },
-          { name: 'Kovetkezo szam', value: getExpectedCountValue(config), inline: true },
-          { name: 'Jelenlegi sorozat', value: `${config.currentStreak}`, inline: true },
-          { name: 'Legjobb sorozat', value: `${config.bestStreak || 0}`, inline: true },
-          { name: 'Utolso szamolo', value: config.lastUserId ? `<@${config.lastUserId}>` : 'Senki', inline: true },
+          { name: 'Enabled', value: config.enabled ? 'Yes' : 'No', inline: true },
+          { name: 'Channel', value: config.channelId ? `<#${config.channelId}>` : 'Not configured', inline: true },
+          { name: 'System', value: getCountingSystemLabel(config.system), inline: true },
+          { name: 'Next count', value: getExpectedCountValue(config), inline: true },
+          { name: 'Current streak', value: `${config.currentStreak}`, inline: true },
+          { name: 'Best streak', value: `${config.bestStreak || 0}`, inline: true },
+          { name: 'Last counter', value: config.lastUserId ? `<@${config.lastUserId}>` : 'None', inline: true },
         ];
 
         return await InteractionHelper.safeEditReply(interaction, {
           embeds: [
             createEmbed({
-              title: 'Szamolo jatek statusza',
-              description: 'A jelenleg beallitott szamolo jatek attekintese.',
+              title: 'Counting Game Status',
+              description: 'Overview of the currently configured counting game.',
               fields,
               color: 'primary',
             }),
@@ -137,7 +137,7 @@ export default {
 
       if (subcommand === 'reset') {
         if (!config.enabled) {
-          return await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'Eloszor engedelyezd a szamolo jatekot a `/count setup` parancsal.' });
+          return await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'Enable the counting game first with `/count setup`.' });
         }
 
         const startNumber = interaction.options.getInteger('start') || 1;
@@ -146,8 +146,8 @@ export default {
         return await InteractionHelper.safeEditReply(interaction, {
           embeds: [
             successEmbed(
-              'Szamolo jatek nullazva',
-              `A szamolasi sorozat nullazva lett. Kezdjetek ujra a **${startNumber}** szammal a(z) <#${config.channelId}> csatornaban.`,
+              'Counting Game Reset',
+              `The counting sequence has been reset. Start again with **${startNumber}** in <#${config.channelId}>.`,
             ),
           ],
         });
@@ -159,18 +159,18 @@ export default {
         return await InteractionHelper.safeEditReply(interaction, {
           embeds: [
             createEmbed({
-              title: 'Szamolo jatek ranglista',
-              description: leaderboard.length > 0 ? leaderboard.join('\n') : 'Meg nem tortent szamolas.',
+              title: 'Counting Game Leaderboard',
+              description: leaderboard.length > 0 ? leaderboard.join('\n') : 'No counts have been recorded yet.',
               color: 'primary',
             }),
           ],
         });
       }
 
-      return await replyUserError(interaction, { type: ErrorTypes.VALIDATION, message: 'Kerlek valassz ervenyes szamolo jatek muveletet.' });
+      return await replyUserError(interaction, { type: ErrorTypes.VALIDATION, message: 'Please choose a valid counting game action.' });
     } catch (error) {
       logger.error('Count command error:', error);
-      return await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'Valami hiba tortent a szamolo jatek kezelese kozben.' });
+      return await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'Something went wrong while managing the counting game.' });
     }
   },
 };

@@ -434,13 +434,13 @@ export const botConfig = {
   // GENERIC BOT MESSAGES
   // =========================
   messages: {
-    noPermission: "Nincs jogosultsagod a parancs hasznalatahoz.",
-    cooldownActive: "Kerlek varj {time} masodpercet, mielott ujra hasznalnad a parancsot.",
-    errorOccurred: "Hiba tortent a parancs vegrehajtasa kozben.",
+    noPermission: "You do not have permission to use this command.",
+    cooldownActive: "Please wait {time} before using this command again.",
+    errorOccurred: "An error occurred while executing this command.",
     missingPermissions:
-      "A botnak nincs elegendo jogosultsaga a muvelet elvegzesehez.",
-    commandDisabled: "Ez a parancs ki lett kapcsolva.",
-    maintenanceMode: "A bot jelenleg karbantartasi modban van.",
+      "I am missing required permissions to perform this action.",
+    commandDisabled: "This command has been disabled.",
+    maintenanceMode: "The bot is currently in maintenance mode.",
   },
 
   // =========================

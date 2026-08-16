@@ -12,35 +12,35 @@ import verificationDashboard from './modules/verification_dashboard.js';
 export default {
     data: new SlashCommandBuilder()
         .setName("verification")
-        .setDescription("A szerver igazolasi rendszerenek kezelese")
+        .setDescription("Manage the server verification system")
         .addSubcommand(subcommand =>
             subcommand
                 .setName("setup")
-                .setDescription("Az igazolasi rendszer beallitasa")
+                .setDescription("Set up the verification system")
                 .addChannelOption(option =>
                     option
                         .setName("verification_channel")
-                        .setDescription("Csatorna, ahova az igazolasi uzenetek erkeznek")
+                        .setDescription("Channel where verification messages will be sent")
                         .addChannelTypes(ChannelType.GuildText)
                         .setRequired(true)
                 )
                 .addRoleOption(option =>
                     option
                         .setName("verified_role")
-                        .setDescription("Az igazolt felhasznaloknak adando rang")
+                        .setDescription("Role to give to verified users")
                         .setRequired(true)
                 )
                 .addStringOption(option =>
                     option
                         .setName("message")
-                        .setDescription("Egyedi igazolasi uzenet")
+                        .setDescription("Custom verification message")
                         .setMaxLength(2000)
                         .setRequired(false)
                 )
                 .addStringOption(option =>
                     option
                         .setName("button_text")
-                        .setDescription("Az igazolasi gomb szovege")
+                        .setDescription("Text for the verification button")
                         .setMaxLength(80)
                         .setRequired(false)
                 )
@@ -48,18 +48,18 @@ export default {
         .addSubcommand(subcommand =>
             subcommand
                 .setName("remove")
-                .setDescription("Igazolas eltavolitasa egy felhasznalorol")
+                .setDescription("Remove verification from a user")
                 .addUserOption(option =>
                     option
                         .setName("user")
-                        .setDescription("Felhasznalo, akirol eltavolitando az igazolas")
+                        .setDescription("User to remove verification from")
                         .setRequired(true)
                 )
         )
         .addSubcommand(subcommand =>
             subcommand
                 .setName("dashboard")
-                .setDescription("Az igazolasi rendszer beallitasi vezerlopultjanak megnyitasa")
+                .setDescription("Open the verification system configuration dashboard")
         ),
 
     async execute(interaction, config, client) {
@@ -71,7 +71,7 @@ export default {
                 throw createError(
                     'Missing ManageGuild permission for verification admin subcommand',
                     ErrorTypes.PERMISSION,
-                    'A parancs hasznalatahoz **Szerver kezelese** jogosultsag szukseges.',
+                    'You need the **Manage Server** permission to use this verification subcommand.',
                     { subcommand, requiredPermission: 'ManageGuild', userId: interaction.user.id }
                 );
             }
@@ -87,7 +87,7 @@ export default {
                     throw createError(
                         `Unknown subcommand: ${subcommand}`,
                         ErrorTypes.VALIDATION,
-                        "Kerlek ervenyes alparancsot valassz.",
+                        "Please select a valid subcommand.",
                         { subcommand }
                     );
             }
@@ -108,7 +108,7 @@ async function handleSetup(interaction, guild, client) {
         throw createError(
             'Bot member not found in guild cache',
             ErrorTypes.CONFIGURATION,
-            'Nem tudtam ellenorizni a jogosultsagaimat ezen a szerveren. Kerlek probald ujra egy pillanat mulva.',
+            'I could not verify my permissions in this server. Please try again in a moment.',
             { guildId: guild.id }
         );
     }
@@ -126,7 +126,7 @@ async function handleSetup(interaction, guild, client) {
         throw createError(
             `Missing channel permissions: ${missingChannelPerms.join(', ')}`,
             ErrorTypes.PERMISSION,
-            'Szuksegem van a **Csatorna megtekintese**, **Uzenetek kuldese** es **Linkek beagyazasa** jogosultsagokra az igazolasi csatornaban.',
+            'I need **View Channel**, **Send Messages**, and **Embed Links** in the verification channel.',
             { missingPermissions: missingChannelPerms, channel: verificationChannel.id }
         );
     }
@@ -135,7 +135,7 @@ async function handleSetup(interaction, guild, client) {
         throw createError(
             "Missing ManageRoles permission",
             ErrorTypes.PERMISSION,
-            "Szuksegem van a 'Rangok kezelese' jogosultsagra az igazolt rang kiosztasahoz.",
+            "I need the 'Manage Roles' permission to give verified roles.",
             { missingPermission: "ManageRoles" }
         );
     }
@@ -144,7 +144,7 @@ async function handleSetup(interaction, guild, client) {
         throw createError(
             'Invalid verified role selected',
             ErrorTypes.VALIDATION,
-            'Kerlek egy normalis kioszthato rangot valassz (ne az @everyone-t vagy egy integracio altal kezelt rangot).',
+            'Please choose a normal assignable role (not @everyone or an integration-managed role).',
             { roleId: verifiedRole.id, managed: verifiedRole.managed }
         );
     }
@@ -154,7 +154,7 @@ async function handleSetup(interaction, guild, client) {
         throw createError(
             "Role hierarchy error",
             ErrorTypes.PERMISSION,
-            "Az igazolt rangnak a legmagasabb rangom alatt kell lennie a szerver rang-hierarchiajaban.",
+            "The verified role must be below my highest role in the server role hierarchy.",
             { rolePosition: verifiedRole.position, botRolePosition: botRole.position }
         );
     }
@@ -168,7 +168,7 @@ async function handleSetup(interaction, guild, client) {
         throw createError(
             'Verification setup blocked by conflicting onboarding system',
             ErrorTypes.CONFIGURATION,
-            'Nem engedelyezheted az igazolasi rendszert, amig az **AutoVerify** vagy az **AutoRole** be van allitva. Eloszor kapcsold ki azokat.',
+            'You cannot enable the verification system while **AutoVerify** or **AutoRole** is configured. Disable those first.',
             {
                 guildId: guild.id,
                 hasAutoVerifyEnabled,
@@ -182,7 +182,7 @@ async function handleSetup(interaction, guild, client) {
     await InteractionHelper.safeDefer(interaction);
 
     const verifyEmbed = createEmbed({
-        title: "Szerver Igazolas",
+        title: "Server Verification",
         description: message,
         color: getColor('success')
     });
@@ -213,11 +213,11 @@ async function handleSetup(interaction, guild, client) {
 
     await InteractionHelper.safeEditReply(interaction, {
         embeds: [successEmbed(
-            'Igazolasi Rendszer Frissitve',
+            'Verification System Updated',
             [
-                `Csatorna: ${verificationChannel}`,
-                `Igazolt rang: ${verifiedRole}`,
-                `Gomb szovege: ${buttonText}`
+                `Channel: ${verificationChannel}`,
+                `Verified Role: ${verifiedRole}`,
+                `Button Text: ${buttonText}`
             ].join('\n')
         )]
     });
@@ -233,7 +233,7 @@ async function handleRemove(interaction, guild, client) {
 
     if (result.status === 'not_verified') {
         return await InteractionHelper.safeReply(interaction, {
-            embeds: [infoEmbed('Nincs Igazolva', `${targetUser.tag} jelenleg nem rendelkezik az igazolt ranggal.`)],
+            embeds: [infoEmbed('Not Verified', `${targetUser.tag} does not currently have the verified role.`)],
             flags: MessageFlags.Ephemeral
         });
     }
@@ -245,6 +245,6 @@ async function handleRemove(interaction, guild, client) {
     });
 
     return await InteractionHelper.safeReply(interaction, {
-        embeds: [successEmbed('Igazolas Eltavolitva', `Igazolas eltavolitva a kovetkezo felhasznalorol: ${targetUser.tag}.`)]
+        embeds: [successEmbed('Verification Removed', `Verification removed from ${targetUser.tag}.`)]
     });
 }

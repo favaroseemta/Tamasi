@@ -6,10 +6,10 @@ import { InteractionHelper } from '../../utils/interactionHelper.js';
 export default {
     data: new SlashCommandBuilder()
         .setName('time')
-        .setDescription('Jelenlegi ido lekerese kulonbozo idozonakban')
+        .setDescription('Get the current time in different timezones')
         .addStringOption(option =>
             option.setName('timezone')
-                .setDescription('A megjelenitendo idozona (pl. UTC, Europe/Budapest)')
+                .setDescription('The timezone to display (e.g., UTC, America/New_York)')
                 .setRequired(false)),
 
     async execute(interaction) {
@@ -35,7 +35,7 @@ export default {
                     logger.warn(`Invalid timezone requested: ${timezone}`);
                     await replyUserError(interaction, {
                         type: ErrorTypes.VALIDATION,
-                        message: 'Ervenytelen idozona. Kerlek ervenyes idozona azonositot hasznalj (pl. UTC, Europe/Budapest, America/New_York)',
+                        message: 'Invalid timezone. Please use a valid timezone identifier (e.g., UTC, America/New_York, Europe/London)',
                     });
                     return;
                 }
@@ -44,15 +44,15 @@ export default {
                 const unixTimestamp = Math.floor(now.getTime() / 1000);
 
                 const embed = successEmbed(
-                    '🕒 Jelenlegi Ido',
+                    '🕒 Current Time',
                     `**${timezone}:** ${timeString}\n` +
-                    `**Unix Idobelyeg:** \`${unixTimestamp}\`\n` +
-                    `**ISO Karakterlanc:** \`${now.toISOString()}\``
+                    `**Unix Timestamp:** \`${unixTimestamp}\`\n` +
+                    `**ISO String:** \`${now.toISOString()}\``
                 );
 
                 await InteractionHelper.safeEditReply(interaction, { embeds: [embed] });
             },
-            'Nem sikerult lekerni a jelenlegi idot. Kerlek probald ujra.',
+            'Failed to get current time. Please try again.',
             {
                 autoDefer: true,
                 deferOptions: { flags: MessageFlags.Ephemeral }

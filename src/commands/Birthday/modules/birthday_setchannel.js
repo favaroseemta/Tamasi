@@ -8,8 +8,8 @@ export default {
         if (!interaction.member.permissions.has(PermissionsBitField.Flags.ManageGuild)) {
             const embed = new EmbedBuilder()
                 .setColor(0xFF0000)
-                .setTitle('Nincs jogosultsagod')
-                .setDescription('A szuletesnapi csatorna beallitasahoz **Szerver kezelese** jogosultsag szukseges.');
+                .setTitle('Permission Denied')
+                .setDescription('You need **Manage Server** permissions to configure the birthday channel.');
             return InteractionHelper.safeReply(interaction, {
                 embeds: [embed],
                 flags: MessageFlags.Ephemeral,
@@ -26,8 +26,8 @@ export default {
                 await setGuildConfig(client, guildId, guildConfig);
                 const embed = new EmbedBuilder()
                     .setColor(0x00FF00)
-                    .setTitle('Szuletesnapi bejelentesek engedelyezve')
-                    .setDescription(`A szuletesnapi bejelentesek ezentul a(z) ${channel} csatornaban jelennek meg.`);
+                    .setTitle('Birthday Announcements Enabled')
+                    .setDescription(`Birthday announcements will now be posted in ${channel}.`);
                 return InteractionHelper.safeReply(interaction, {
                     embeds: [embed],
                     flags: MessageFlags.Ephemeral,
@@ -37,8 +37,8 @@ export default {
                 await setGuildConfig(client, guildId, guildConfig);
                 const embed = new EmbedBuilder()
                     .setColor(0xFFFF00)
-                    .setTitle('Szuletesnapi bejelentesek kikapcsolva')
-                    .setDescription('Nincs megadva csatorna — a szuletesnapi bejelentesek ki lettek kapcsolva.');
+                    .setTitle('Birthday Announcements Disabled')
+                    .setDescription('No channel provided — birthday announcements have been disabled.');
                 return InteractionHelper.safeReply(interaction, {
                     embeds: [embed],
                     flags: MessageFlags.Ephemeral,
@@ -48,8 +48,8 @@ export default {
             logger.error('birthday_setchannel error:', error);
             const embed = new EmbedBuilder()
                 .setColor(0xFF0000)
-                .setTitle('⚠️ Beallitasi hiba')
-                .setDescription('Nem sikerult menteni a szuletesnapi csatorna beallitasat.');
+                .setTitle('⚠️ Configuration Error')
+                .setDescription('Could not save the birthday channel configuration.');
             return InteractionHelper.safeReply(interaction, {
                 embeds: [embed],
                 flags: MessageFlags.Ephemeral,

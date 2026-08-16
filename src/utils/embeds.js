@@ -227,23 +227,23 @@ export function createEmbed({
 }
 
 const NOTIFICATION_DEFAULT_TITLES = {
-  success: 'Siker',
-  error: 'Hiba',
-  info: 'Informacio',
-  warning: 'Figyelmeztetes',
-  primary: 'Ertesites',
+  success: 'Success',
+  error: 'Error',
+  info: 'Information',
+  warning: 'Warning',
+  primary: 'Notice',
 };
 
 export const USER_ERROR_TITLES = {
-  validation: 'Ervenytelen megadas',
-  permission: 'Nincs jogosultsagod',
-  configuration: 'Beallitasi hiba',
-  database: 'Adatbazis hiba',
-  network: 'Halozati hiba',
-  discord_api: 'Discord API hiba',
-  user_input: 'Bemeneti hiba',
-  rate_limit: 'Tul gyors',
-  unknown: 'Hiba tortent',
+  validation: 'Invalid Input',
+  permission: 'Permission Denied',
+  configuration: 'Configuration Error',
+  database: 'Database Error',
+  network: 'Network Error',
+  discord_api: 'Discord API Error',
+  user_input: 'Input Error',
+  rate_limit: 'Too Fast',
+  unknown: 'Something Went Wrong',
 };
 
 const USER_ERROR_COLORS = {
@@ -303,7 +303,7 @@ export function errorEmbed(title, detail = null, options = {}) {
   }
 
   const description = body ? String(body).trim() : '';
-  const titleOverride = title && title !== 'Hiba' && title !== 'Error' ? title : undefined;
+  const titleOverride = title && title !== 'Error' ? title : undefined;
 
   return buildUserErrorEmbed('unknown', description, { titleOverride });
 }
@@ -311,28 +311,28 @@ export function errorEmbed(title, detail = null, options = {}) {
 /** @param {string} titleOrBody - With one arg: body text. With two args: title and body. */
 export function successEmbed(title, body = '') {
   if (arguments.length === 1) {
-    return buildNotificationEmbed('Siker', title, 'success');
+    return buildNotificationEmbed('Success', title, 'success');
   }
 
-  return buildNotificationEmbed(title || 'Siker', body, 'success');
+  return buildNotificationEmbed(title || 'Success', body, 'success');
 }
 
 /** @param {string} titleOrBody - With one arg: body text. With two args: title and body. */
 export function infoEmbed(title, body = '') {
   if (arguments.length === 1) {
-    return buildNotificationEmbed('Informacio', title, 'info');
+    return buildNotificationEmbed('Information', title, 'info');
   }
 
-  return buildNotificationEmbed(title || 'Informacio', body, 'info');
+  return buildNotificationEmbed(title || 'Information', body, 'info');
 }
 
 /** @param {string} titleOrBody - With one arg: body text. With two args: title and body. */
 export function warningEmbed(title, body = '') {
   if (arguments.length === 1) {
-    return buildNotificationEmbed('Figyelmeztetes', title, 'warning');
+    return buildNotificationEmbed('Warning', title, 'warning');
   }
 
-  return buildNotificationEmbed(title || 'Figyelmeztetes', body, 'warning');
+  return buildNotificationEmbed(title || 'Warning', body, 'warning');
 }
 
 export function formatUser(user) {

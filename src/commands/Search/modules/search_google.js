@@ -8,11 +8,11 @@ export default {
         const searchUrl = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
 
         const embed = createEmbed({
-            title: 'Google Kereses',
-            description: `[Kereses erre: "${query}"](${searchUrl})`,
+            title: 'Google Search',
+            description: `[Search for "${query}"](${searchUrl})`,
             color: 'info'
         })
-        .setFooter({ text: 'Google Keresesi Eredmenyek' });
+        .setFooter({ text: 'Google Search Results' });
 
         await InteractionHelper.safeReply(interaction, { embeds: [embed] });
 

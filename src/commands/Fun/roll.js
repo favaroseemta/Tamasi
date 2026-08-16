@@ -7,11 +7,11 @@ import { InteractionHelper } from '../../utils/interactionHelper.js';
 export default {
     data: new SlashCommandBuilder()
     .setName("roll")
-    .setDescription("Kockadobas szabvanyos formatumban (pl. 2d20, 1d6 + 5).")
+    .setDescription("Rolls dice using standard notation (e.g., 2d20, 1d6 + 5).")
     .addStringOption((option) =>
       option
         .setName("notation")
-        .setDescription("Kockadobasi formatum (pl. 2d6, 1d20 + 4)")
+        .setDescription("The dice notation (e.g., 2d6, 1d20 + 4)")
         .setRequired(true)
         .setMaxLength(50),
     ),
@@ -31,7 +31,7 @@ export default {
       throw new TitanBotError(
         `Invalid dice notation: ${notation}`,
         ErrorTypes.USER_INPUT,
-        'Ervenytelen kockadobasi formatum. Hasznalj pl. `1d20` vagy `3d6+5` formatumot.'
+        'Invalid notation. Use format like `1d20` or `3d6+5`.'
       );
     }
 
@@ -43,7 +43,7 @@ export default {
       throw new TitanBotError(
         `Too many dice requested: ${numDice}`,
         ErrorTypes.VALIDATION,
-        'A kockak szama 1 es 20 kozott kell legyen.'
+        'Please keep the number of dice between 1 and 20.'
       );
     }
 
@@ -51,7 +51,7 @@ export default {
       throw new TitanBotError(
         `Invalid number of sides: ${numSides}`,
         ErrorTypes.VALIDATION,
-        'Az oldalak szama 1 es 1000 kozott kell legyen.'
+        'Please keep the number of sides between 1 and 1000.'
       );
     }
 
@@ -67,12 +67,12 @@ export default {
     const finalTotal = totalRoll + modifier;
 
     const resultsDetail =
-      numDice > 1 ? `**Dobasok:** ${rolls.join(" + ")}\n` : "";
+      numDice > 1 ? `**Rolls:** ${rolls.join(" + ")}\n` : "";
     const modifierText = modifier !== 0 ? `+ (${modifier})` : "";
 
     const embed = successEmbed(
-      `🎲 Dobas: ${numDice}d${numSides}${modifier !== 0 ? match[3] : ""}`,
-      `${resultsDetail}**Osszesen:** ${totalRoll}${modifierText} = **${finalTotal}**`,
+      `🎲 Rolling ${numDice}d${numSides}${modifier !== 0 ? match[3] : ""}`,
+      `${resultsDetail}**Total Roll:** ${totalRoll}${modifierText} = **${finalTotal}**`,
     );
 
     await InteractionHelper.safeEditReply(interaction, { embeds: [embed] });

@@ -8,54 +8,54 @@ const MAX_OPTIONS = 10;
 export default {
     data: new SlashCommandBuilder()
         .setName('poll')
-        .setDescription('Egyszeru szavazas letrehozasa akar 10 opcioval')
+        .setDescription('Create a simple poll with up to 10 options')
         .addStringOption(option =>
             option.setName('question')
-                .setDescription('A szavazas kerdese')
+                .setDescription('The poll question')
                 .setRequired(true))
         .addStringOption(option =>
             option.setName('option1')
-                .setDescription('Elso opcio')
+                .setDescription('First option')
                 .setRequired(true))
         .addStringOption(option =>
             option.setName('option2')
-                .setDescription('Masodik opcio')
+                .setDescription('Second option')
                 .setRequired(true))
         .addStringOption(option =>
             option.setName('option3')
-                .setDescription('Harmadik opcio (opcionalis)')
+                .setDescription('Third option (optional)')
                 .setRequired(false))
         .addStringOption(option =>
             option.setName('option4')
-                .setDescription('Negyedik opcio (opcionalis)')
+                .setDescription('Fourth option (optional)')
                 .setRequired(false))
         .addStringOption(option =>
             option.setName('option5')
-                .setDescription('Otodik opcio (opcionalis)')
+                .setDescription('Fifth option (optional)')
                 .setRequired(false))
         .addStringOption(option =>
             option.setName('option6')
-                .setDescription('Hatodik opcio (opcionalis)')
+                .setDescription('Sixth option (optional)')
                 .setRequired(false))
         .addStringOption(option =>
             option.setName('option7')
-                .setDescription('Hetedik opcio (opcionalis)')
+                .setDescription('Seventh option (optional)')
                 .setRequired(false))
         .addStringOption(option =>
             option.setName('option8')
-                .setDescription('Nyolcadik opcio (opcionalis)')
+                .setDescription('Eighth option (optional)')
                 .setRequired(false))
         .addStringOption(option =>
             option.setName('option9')
-                .setDescription('Kilencedik opcio (opcionalis)')
+                .setDescription('Ninth option (optional)')
                 .setRequired(false))
         .addStringOption(option =>
             option.setName('option10')
-                .setDescription('Tizedik opcio (opcionalis)')
+                .setDescription('Tenth option (optional)')
                 .setRequired(false))
         .addBooleanOption(option =>
             option.setName('anonymous')
-                .setDescription('Anonim szavazas (alapertelmezett: hamis)')
+                .setDescription('Make the poll anonymous (default: false)')
                 .setRequired(false)),
 
     async execute(interaction) {
@@ -79,7 +79,7 @@ export default {
         }
 
         if (options.length < 2) {
-            throw new Error("A szavazashoz legalabb 2 opciot meg kell adnod.");
+            throw new Error("You must provide at least 2 options for the poll.");
         }
 
         let description = `**${question}**\n\n`;
@@ -88,13 +88,13 @@ export default {
         });
 
         if (isAnonymous) {
-            description += '\n*Ez egy anonim szavazas. A szavazatok nincsenek felhasznalokhoz rendelve.*';
+            description += '\n*This is an anonymous poll. Votes are not tracked to users.*';
         } else {
-            description += '\n*Reagalj az emojival a szavazashoz!*';
+            description += '\n*React with the emoji to vote!*';
         }
 
         const embed = successEmbed(
-            `📊 ${isAnonymous ? 'Anonim ' : ''}Szavazas`,
+            `📊 ${isAnonymous ? 'Anonymous ' : ''}Poll`,
             description
         );
 
@@ -106,7 +106,7 @@ export default {
         }
 
         await InteractionHelper.safeEditReply(interaction, {
-            content: '✅ Szavazas sikeresen letrehozva!',
+            content: '✅ Poll created successfully!',
         });
     },
 };

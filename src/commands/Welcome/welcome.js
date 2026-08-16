@@ -9,28 +9,28 @@ import { ErrorTypes, replyUserError } from '../../utils/errorHandler.js';
 export default {
     data: new SlashCommandBuilder()
         .setName('welcome')
-        .setDescription('Az udvozlo rendszer konfiguralasa')
+        .setDescription('Configure the welcome system')
         .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
         .addSubcommand(subcommand =>
             subcommand
                 .setName('setup')
-                .setDescription('Az udvozlo uzenet beallitasa')
+                .setDescription('Set up the welcome message')
                 .addChannelOption(option =>
                     option.setName('channel')
-                        .setDescription('A csatorna, ahova az udvozlo uzenetek erkeznek')
+                        .setDescription('The channel to send welcome messages to')
                         .addChannelTypes(ChannelType.GuildText)
                         .setRequired(true))
                 .addStringOption(option =>
                     option.setName('message')
-                        .setDescription('Udvozlo uzenet. Valtozok: {user}, {username}, {server}, {memberCount}')
+                        .setDescription('Welcome message. Variables: {user}, {username}, {server}, {memberCount}')
                         .setRequired(true))
                 .addStringOption(option =>
                     option.setName('image')
-                        .setDescription('Az udvozlo uzenetben megjelenitendo kep URL-je')
+                        .setDescription('URL of the image to include in the welcome message')
                         .setRequired(false))
                 .addBooleanOption(option =>
                     option.setName('ping')
-                        .setDescription('Meg legyen-e emlitve a felhasznalo az udvozlo uzenetben')
+                        .setDescription('Whether to ping the user in the welcome message')
                         .setRequired(false))),
 
     async execute(interaction) {
@@ -52,7 +52,7 @@ export default {
         const { options, guild, client } = interaction;
 
         if (!interaction.memberPermissions?.has(PermissionFlagsBits.ManageGuild)) {
-            return await replyUserError(interaction, { type: ErrorTypes.PERMISSION, message: 'A `/welcome` parancs hasznalatahoz **Szerver kezelese** jogosultsag szukseges.' });
+            return await replyUserError(interaction, { type: ErrorTypes.PERMISSION, message: 'You need the **Manage Server** permission to use `/welcome`.' });
         }
 
         const subcommand = options.getSubcommand();
@@ -66,12 +66,12 @@ export default {
             const existingConfig = await getWelcomeConfig(client, guild.id);
             if (existingConfig?.channelId) {
                 logger.info(`[Welcome] Setup blocked because config already exists in channel ${existingConfig.channelId} for guild ${guild.id}`);
-                return await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: `Az udvozles mar be van allitva a(z) <#${existingConfig.channelId}> csatornaban. Hasznald a **/greet dashboard** parancsot a beallitasok testreszabasahoz.` });
+                return await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: `Welcome is already configured for <#${existingConfig.channelId}>. Use **/greet dashboard** to customize channel, message, ping, or image.` });
             }
             
             if (!message || message.trim().length === 0) {
                 logger.warn(`[Welcome] Empty message provided by ${interaction.user.tag} in ${guild.name}`);
-                return await replyUserError(interaction, { type: ErrorTypes.VALIDATION, message: 'Az udvozlo uzenet nem lehet ures' });
+                return await replyUserError(interaction, { type: ErrorTypes.VALIDATION, message: 'Welcome message cannot be empty' });
             }
 
             if (image) {
@@ -79,7 +79,7 @@ export default {
                     new URL(image);
                 } catch (e) {
                     logger.warn(`[Welcome] Invalid image URL provided by ${interaction.user.tag}: ${image}`);
-                    return await replyUserError(interaction, { type: ErrorTypes.VALIDATION, message: 'Kerlek adj meg egy ervenyes kep URL-t (http:// vagy https:// szoveggel kell kezdodnie)' });
+                    return await replyUserError(interaction, { type: ErrorTypes.VALIDATION, message: 'Please provide a valid image URL (must start with http:// or https://' });
                 }
             }
 
@@ -101,14 +101,14 @@ export default {
 
                 const embed = new EmbedBuilder()
                     .setColor(getColor('success'))
-                    .setTitle('Udvozlo Rendszer Beallitva')
-                    .setDescription(`Az udvozlo uzenetek ezentul a(z) ${channel} csatornaba erkeznek`)
+                    .setTitle('Welcome System Configured')
+                    .setDescription(`Welcome messages will now be sent to ${channel}`)
                     .addFields(
-                        { name: 'Uzenet elonezet', value: truncateForEmbedField(previewMessage) },
-                        { name: 'Felhasznalo megemlitese', value: ping ? 'Igen' : 'Nem' },
-                        { name: 'Statusz', value: 'Engedelyezve' }
+                        { name: 'Message Preview', value: truncateForEmbedField(previewMessage) },
+                        { name: 'Ping User', value: ping ? 'Yes' : 'No' },
+                        { name: 'Status', value: 'Enabled' }
                     )
-                    .setFooter({ text: 'Tipp: Hasznald a /greet dashboard parancsot az udvozlesi beallitasok testreszabasahoz' });
+                    .setFooter({ text: 'Tip: Use /greet dashboard to customize welcome settings' });
 
                 if (image) {
                     embed.setImage(image);
@@ -117,7 +117,7 @@ export default {
                 await InteractionHelper.safeEditReply(interaction, { embeds: [embed] });
             } catch (error) {
                 logger.error(`[Welcome] Failed to setup welcome system for guild ${guild.id}:`, error);
-                await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'Hiba tortent az udvozlo rendszer konfiguralasa kozben. Kerlek probald ujra.' });
+                await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'An error occurred while configuring the welcome system. Please try again.' });
             }
         }
     },

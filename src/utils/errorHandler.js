@@ -117,54 +117,54 @@ export function categorizeError(error) {
 
 const UserMessages = {
     [ErrorTypes.VALIDATION]: {
-        default: 'Kerlek ellenorizd a bemeneti adatokat es probald ujra.',
-        missing_required: 'Hianyoznak a szukseges adatok. Ellenorizd a parancs opcioit es probald ujra.',
-        invalid_format: 'A megadott formatum helytelen. Ellenorizd a parancs hasznalatat es probald ujra.'
+        default: 'Please check your input and try again.',
+        missing_required: "You're missing some required information. Check the command options and try again.",
+        invalid_format: 'The format you provided is incorrect. Check the command usage and try again.'
     },
     [ErrorTypes.PERMISSION]: {
-        default: 'Nincs jogosultsagod ehhez a muvelethez.',
-        user_permission: 'Nincs jogosultsagod a parancs hasznalatahoz.',
-        bot_permission: 'A botnak nincs elegendo jogosultsaga ebben a csatornaban.'
+        default: "You don't have permission to do that.",
+        user_permission: "You don't have permission to use this command.",
+        bot_permission: "I don't have the permissions needed to do that in this channel."
     },
     [ErrorTypes.CONFIGURATION]: {
-        default: 'Ez a funkcio meg nincs beallitva. Kerj meg egy adminisztratort a beallitasara.',
-        missing_config: 'Ez a funkcio meg nincs konfiguralva. Kerj meg egy adminisztratort a beallitasara.',
-        invalid_config: 'A szerver konfiguralasa ehhez a funkciohoz ervenytelen. Kerj meg egy adminisztratort az ellenorzesre.'
+        default: 'This feature is not set up yet. Ask a server administrator to configure it.',
+        missing_config: 'This feature has not been configured yet. Ask a server administrator to set it up.',
+        invalid_config: 'The server configuration for this feature is invalid. Ask a server administrator to review it.'
     },
     [ErrorTypes.DATABASE]: {
-        default: 'Hiba tortent az adatok mentese kozben. Kerlek probald ujra egy pillanat mulva.',
-        connection_failed: 'Nem sikerult csatlakozni az adatbazishoz. Kerlek probald ujra kesobb.',
-        timeout: 'A muvelet tul sok ideig tartott. Kerlek probald ujra.'
+        default: 'Something went wrong while saving data. Please try again in a moment.',
+        connection_failed: 'I could not reach the database. Please try again later.',
+        timeout: 'That took too long to complete. Please try again.'
     },
     [ErrorTypes.NETWORK]: {
-        default: 'Nem sikerult elerni a kulso szolgaltatast. Kerlek probald ujra egy pillanat mulva.',
-        timeout: 'A keres idotullepest erte el. Kerlek probald ujra.',
-        unreachable: 'A szolgaltatas jelenleg nem erheto el. Kerlek probald ujra kesobb.'
+        default: 'I could not reach an external service. Please try again in a moment.',
+        timeout: 'The request timed out. Please try again.',
+        unreachable: 'The service is unavailable right now. Please try again later.'
     },
     [ErrorTypes.DISCORD_API]: {
-        default: 'A Discord elutasitotta a kerest. Kerlek probald ujra egy pillanat mulva.',
-        rate_limit: 'Tul gyorsan csinalod. Varj egy pillanatot es probald ujra.',
-        forbidden: 'A botnak nincs joga ehhez a muvelethez. Ellenorizd a rangjait es engedelyeit.'
+        default: 'Discord rejected that request. Please try again in a moment.',
+        rate_limit: "You're doing that too quickly. Wait a moment and try again.",
+        forbidden: "I'm not allowed to do that here. Check my role permissions."
     },
     [ErrorTypes.USER_INPUT]: {
-        default: 'Problema tortent a keresselel. Ellenorizd az adatokat es probald ujra.',
-        invalid_user: 'Nem talalhato a megadott felhasznalo. Ellenorizd a megjelolest vagy az ID-t es probald ujra.',
-        invalid_channel: 'Nem talalhato a megadott csatorna. Ellenorizd a megjelolest vagy az ID-t es probald ujra.'
+        default: 'There was a problem with your request. Check your input and try again.',
+        invalid_user: 'I could not find that user. Check the mention or ID and try again.',
+        invalid_channel: 'I could not find that channel. Check the mention or ID and try again.'
     },
     [ErrorTypes.RATE_LIMIT]: {
-        default: 'Tul gyorsan csinalod. Varj egy pillanatot es probald ujra.',
-        command_cooldown: 'Ez a parancs jelenleg toltodik. Varj mielott ujra hasznalnad.',
-        global_rate_limit: 'A Discord korlatozza a kereseket. Varj egy pillanatot es probald ujra.'
+        default: "You're doing that too quickly. Wait a moment and try again.",
+        command_cooldown: 'This command is on cooldown. Wait before using it again.',
+        global_rate_limit: 'Discord is rate limiting requests. Wait a moment and try again.'
     },
     [ErrorTypes.UNKNOWN]: {
-        default: 'Valami hiba tortent. Kerlek probald ujra egy pillanat mulva.',
-        unexpected: 'Varatlan hiba tortent. Kerlek probald ujra kesobb.',
-        warn_failed: 'Nem sikerult figyelmeztetni a tagot. Ellenorizd a bot rangjat es engedelyeit, majd probald ujra.',
-        kick_failed: 'Nem sikerult kirugni a tagot. Ellenorizd a bot rangjat es engedelyeit, majd probald ujra.',
-        ban_failed: 'Nem sikerult kitiltani a tagot. Ellenorizd a bot rangjat es engedelyeit, majd probald ujra.',
-        unban_failed: 'Nem sikerult feloldani a kitiltast. Ellenorizd a bot engedelyeit es probald ujra.',
-        timeout_failed: 'Nem sikerult nemitani a tagot. Ellenorizd a bot rangjat es engedelyeit, majd probald ujra.',
-        untimeout_failed: 'Nem sikerult feloldani a nemitast. Ellenorizd a bot engedelyeit es probald ujra.'
+        default: 'Something went wrong. Please try again in a moment.',
+        unexpected: 'An unexpected error occurred. Please try again later.',
+        warn_failed: 'I could not warn that member. Check my permissions and role hierarchy, then try again.',
+        kick_failed: 'I could not kick that member. Check my permissions and role hierarchy, then try again.',
+        ban_failed: 'I could not ban that member. Check my permissions and role hierarchy, then try again.',
+        unban_failed: 'I could not unban that user. Check my permissions and try again.',
+        timeout_failed: 'I could not timeout that member. Check my permissions and role hierarchy, then try again.',
+        untimeout_failed: 'I could not remove the timeout. Check my permissions and try again.'
     }
 };
 

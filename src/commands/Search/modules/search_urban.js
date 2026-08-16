@@ -15,7 +15,7 @@ export default {
                     term: term,
                     guildId: interaction.guildId
                 });
-                return await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'Kerlek adj meg egy legalabb 2 karakteres kifejezest.' });
+                return await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'Please enter a term with at least 2 characters.' });
             }
 
             let deferTimer = null;
@@ -43,7 +43,7 @@ export default {
             clearDeferTimer();
 
             if (!response.data?.list?.length) {
-                return await replyUserError(interaction, { type: ErrorTypes.USER_INPUT, message: `Nem talalhato definicio a kovetkezo kifejezesre: "${term}" az Urban Dictionary-ben.` });
+                return await replyUserError(interaction, { type: ErrorTypes.USER_INPUT, message: `No definitions found for "${term}" on Urban Dictionary.` });
             }
 
             const definition = response.data.list[0];
@@ -56,7 +56,7 @@ export default {
 
             const formattedExample = cleanExample
                 ? `*"${cleanExample.replace(/\n/g, ' ').slice(0, 500)}..."*`
-                : '*Nincs megadva pelda*';
+                : '*No example provided*';
 
             const embed = createEmbed({
                 title: definition.word,
@@ -66,18 +66,18 @@ export default {
             .setURL(definition.permalink)
             .addFields(
                 {
-                    name: 'Pelda',
+                    name: 'Example',
                     value: formattedExample,
                     inline: false
                 },
                 {
-                    name: 'Statisztika',
+                    name: 'Stats',
                     value: `${definition.thumbs_up.toLocaleString()} • ${definition.thumbs_down.toLocaleString()}`,
                     inline: true
                 },
                 {
-                    name: 'Szerzo',
-                    value: definition.author || 'Nevtelen',
+                    name: 'Author',
+                    value: definition.author || 'Anonymous',
                     inline: true
                 }
             )
@@ -107,9 +107,9 @@ export default {
             });
 
             if (error.response?.status === 404 || !error.response) {
-                await replyUserError(interaction, { type: ErrorTypes.USER_INPUT, message: `Nem talalhato definicio a kovetkezo kifejezesre: "${interaction.options.getString('term')}" az Urban Dictionary-ben.` });
+                await replyUserError(interaction, { type: ErrorTypes.USER_INPUT, message: `No definitions found for "${interaction.options.getString('term')}" on Urban Dictionary.` });
             } else if (error.response?.status === 429) {
-                await replyUserError(interaction, { type: ErrorTypes.RATE_LIMIT, message: 'Tul sok keres erkezett az Urban Dictionary-hoz. Kerlek probald ujra par perc mulva.' });
+                await replyUserError(interaction, { type: ErrorTypes.RATE_LIMIT, message: 'Too many requests to Urban Dictionary. Please try again in a few minutes.' });
             } else {
                 await handleInteractionError(interaction, error, {
                     commandName: 'urban',

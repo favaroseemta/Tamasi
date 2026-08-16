@@ -6,7 +6,7 @@ import { InteractionHelper } from '../../utils/interactionHelper.js';
 export default {
     data: new SlashCommandBuilder()
     .setName("uptime")
-    .setDescription("Ellenorzi, hogy miiota online a bot"),
+    .setDescription("Check how long the bot has been online"),
 
   async execute(interaction) {
     try {
@@ -24,7 +24,7 @@ export default {
 
       await InteractionHelper.safeEditReply(interaction, {
         embeds: [createEmbed({ 
-          title: "Rendszer uzemido", 
+          title: "System Uptime", 
           description: `\`\`\`${uptimeStr}\`\`\`` 
         })],
       });
@@ -33,7 +33,7 @@ export default {
       
       try {
         return await InteractionHelper.safeEditReply(interaction, {
-          embeds: [createEmbed({ title: 'Rendszerhiba', description: 'Nem sikerult kiszamitani az uzemidot.', color: 'error' })],
+          embeds: [createEmbed({ title: 'System Error', description: 'Could not compute uptime.', color: 'error' })],
           flags: MessageFlags.Ephemeral,
         });
       } catch (replyError) {

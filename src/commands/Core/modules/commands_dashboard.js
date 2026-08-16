@@ -80,22 +80,22 @@ export function buildOverviewEmbed(snapshot, guild) {
 
   const categoryLines = snapshot.categories.map((category) => {
     const icon = getCategoryStatus(category);
-    const subcommandNote = category.commands.some((c) => c.isSubcommand) ? ' · alparancsokkal' : '';
+    const subcommandNote = category.commands.some((c) => c.isSubcommand) ? ' · incl. subcommands' : '';
     return `${icon} ${category.icon} **${category.displayName}** — ${category.enabledCount}/${category.totalCount}${subcommandNote}`;
   });
 
   const fields = [
     {
-      name: '📊 Osszegzes',
+      name: '📊 Summary',
       value: [
-        `**${snapshot.enabledTotal}/${snapshot.totalCommands}** elem engedelyezve`,
-        `${STATUS.enabled} ${fullyEnabled} teljesen be · ${STATUS.partial} ${partial} reszben be · ${STATUS.disabled} ${disabled} ki`,
+        `**${snapshot.enabledTotal}/${snapshot.totalCommands}** entries enabled`,
+        `${STATUS.enabled} ${fullyEnabled} fully on · ${STATUS.partial} ${partial} partial · ${STATUS.disabled} ${disabled} off`,
       ].join('\n'),
       inline: false,
     },
     {
-      name: '🔑 Jelmagyarazat',
-      value: `${STATUS.enabled} Mind engedelyezve · ${STATUS.partial} Nemi tiltva · ${STATUS.disabled} Kategoria kikapcsolva`,
+      name: '🔑 Legend',
+      value: `${STATUS.enabled} All enabled · ${STATUS.partial} Some disabled · ${STATUS.disabled} Category off`,
       inline: false,
     },
   ];
@@ -103,37 +103,37 @@ export function buildOverviewEmbed(snapshot, guild) {
   const chunks = chunkLines(categoryLines);
   chunks.forEach((chunk, index) => {
     fields.push({
-      name: index === 0 ? '📁 Kategoriak' : '📁 Kategoriak (folyt.)',
+      name: index === 0 ? '📁 Categories' : '📁 Categories (cont.)',
       value: chunk,
       inline: false,
     });
   });
 
   fields.push({
-    name: 'Hasznalat',
+    name: 'How to Use',
     value: [
-      '• Valassz egy kategoriat alabb a parancsok kezelesehez',
-      '• `/commands disable` — kategoria vagy parancs kikapcsolasa',
-      '• `/commands enable` — parancs visszakapcsolasa',
+      '• Select a category below to manage commands and subcommands',
+      '• `/commands disable` — turn off a category or specific command',
+      '• `/commands enable` — turn something back on',
     ].join('\n'),
   });
 
   return createEmbed({
-    title: '⚙️ Parancs Hozzaferes',
-    description: `Slash es prefix parancsok kezelese a(z) **${guild.name}** szerveren.`,
+    title: '⚙️ Command Access',
+    description: `Manage slash and prefix commands for **${guild.name}**. Subcommands (e.g. \`birthday list\`) are listed separately.`,
     color: 'info',
     fields,
-    footer: '🔒 commands & configwizard mindig elerhetoek maradnak',
+    footer: '🔒 commands & configwizard always stay available',
   });
 }
 
 export function buildCategoryEmbed(category, guild) {
   const statusIcon = getCategoryStatus(category);
   const statusText = category.categoryDisabled
-    ? 'Kategoria kikapcsolva'
+    ? 'Category disabled'
     : category.disabledCount === 0
-      ? 'Minden elem engedelyezve'
-      : `${category.disabledCount} / ${category.totalCount} tiltva`;
+      ? 'All entries enabled'
+      : `${category.disabledCount} of ${category.totalCount} disabled`;
 
   const commandLines = category.commands.map((command) => {
     const enabled = category.enabledCommands.includes(command.name);
@@ -144,13 +144,13 @@ export function buildCategoryEmbed(category, guild) {
 
   const fields = [
     {
-      name: `${statusIcon} Statusz`,
+      name: `${statusIcon} Status`,
       value: statusText,
       inline: true,
     },
     {
-      name: '📈 Darabszam',
-      value: `${category.enabledCount}/${category.totalCount} engedelyezve`,
+      name: '📈 Count',
+      value: `${category.enabledCount}/${category.totalCount} enabled`,
       inline: true,
     },
   ];
@@ -158,27 +158,27 @@ export function buildCategoryEmbed(category, guild) {
   const chunks = chunkLines(commandLines);
   chunks.forEach((chunk, index) => {
     fields.push({
-      name: index === 0 ? '📋 Parancsok es Alparancsok' : '📋 (folyt.)',
+      name: index === 0 ? '📋 Commands & Subcommands' : '📋 (cont.)',
       value: chunk,
       inline: false,
     });
   });
 
   fields.push({
-    name: 'Hasznalat',
+    name: 'How to Use',
     value: [
-      '• Hasznald a legordulo menut az egyes parancsok kapcsolasahoz',
-      '• **Mind tiltasa** kikapcsolja a teljes kategoriat',
-      '• **Modositasok torlese** visszakapcsolja a tiltott elemeket',
+      '• Use the dropdown to toggle individual commands or subcommands',
+      '• **Disable All** turns off the whole category',
+      '• **Clear Overrides** re-enables individually disabled entries',
     ].join('\n'),
   });
 
   return createEmbed({
     title: `${category.icon} ${category.displayName}`,
-    description: `Parancs hozzaferes a(z) **${guild.name}** szerveren.`,
+    description: `Command access for **${guild.name}**.`,
     color: category.categoryDisabled ? 'error' : category.disabledCount > 0 ? 'warning' : 'success',
     fields,
-    footer: '🔒 A vedett elemek nem tilthatoak',
+    footer: '🔒 Protected entries cannot be disabled',
   });
 }
 
@@ -187,7 +187,7 @@ export function buildOverviewComponents(guildId, snapshot) {
     const status = getCategoryStatus(category);
     return new StringSelectMenuOptionBuilder()
       .setLabel(`${category.displayName}`.slice(0, 100))
-      .setDescription(`${status} ${category.enabledCount}/${category.totalCount} engedelyezve`.slice(0, 100))
+      .setDescription(`${status} ${category.enabledCount}/${category.totalCount} enabled`.slice(0, 100))
       .setValue(category.key)
       .setEmoji(category.icon);
   });
@@ -196,13 +196,13 @@ export function buildOverviewComponents(guildId, snapshot) {
     new ActionRowBuilder().addComponents(
       new StringSelectMenuBuilder()
         .setCustomId(customId(DASHBOARD_CATEGORY_SELECT, guildId))
-        .setPlaceholder('📁 Valassz egy kategoriat...')
+        .setPlaceholder('📁 Select a category...')
         .addOptions(categoryOptions),
     ),
     new ActionRowBuilder().addComponents(
       new ButtonBuilder()
         .setCustomId(customId(DASHBOARD_REFRESH, guildId))
-        .setLabel('Frissites')
+        .setLabel('Refresh')
         .setEmoji('🔄')
         .setStyle(ButtonStyle.Secondary),
     ),
@@ -219,7 +219,7 @@ export function buildCategoryComponents(guildId, category) {
 
     return new StringSelectMenuOptionBuilder()
       .setLabel(label)
-      .setDescription((enabled ? '🟢 Engedelyezve — kattints a tiltashoz' : '🔴 Tiltva — kattints az engedelyezeshez').slice(0, 100))
+      .setDescription((enabled ? '🟢 Enabled — click to disable' : '🔴 Disabled — click to enable').slice(0, 100))
       .setValue(command.name);
   });
 
@@ -227,27 +227,27 @@ export function buildCategoryComponents(guildId, category) {
     new ActionRowBuilder().addComponents(
       new ButtonBuilder()
         .setCustomId(customId(DASHBOARD_HOME, guildId))
-        .setLabel('Vissza')
+        .setLabel('Back')
         .setEmoji('◀️')
         .setStyle(ButtonStyle.Secondary),
       new ButtonBuilder()
         .setCustomId(customId(DASHBOARD_TOGGLE_CATEGORY, guildId, category.key))
-        .setLabel(category.categoryDisabled ? 'Kategoria engedelyezese' : 'Kategoria tiltasa')
+        .setLabel(category.categoryDisabled ? 'Enable Category' : 'Disable Category')
         .setEmoji(category.categoryDisabled ? '🟢' : '🔴')
         .setStyle(category.categoryDisabled ? ButtonStyle.Success : ButtonStyle.Danger),
       new ButtonBuilder()
         .setCustomId(customId(DASHBOARD_ENABLE_ALL, guildId, category.key))
-        .setLabel('Mind engedelyezese')
+        .setLabel('Enable All')
         .setEmoji('✅')
         .setStyle(ButtonStyle.Success),
       new ButtonBuilder()
         .setCustomId(customId(DASHBOARD_DISABLE_ALL, guildId, category.key))
-        .setLabel('Mind tiltasa')
+        .setLabel('Disable All')
         .setEmoji('⛔')
         .setStyle(ButtonStyle.Danger),
       new ButtonBuilder()
         .setCustomId(customId(DASHBOARD_RESET_COMMANDS, guildId, category.key))
-        .setLabel('Modositasok torlese')
+        .setLabel('Clear Overrides')
         .setEmoji('🧹')
         .setStyle(ButtonStyle.Secondary),
     ),
@@ -258,7 +258,7 @@ export function buildCategoryComponents(guildId, category) {
       new ActionRowBuilder().addComponents(
         new StringSelectMenuBuilder()
           .setCustomId(customId(DASHBOARD_COMMAND_SELECT, guildId, category.key))
-          .setPlaceholder('Valassz egy parancsot a kapcsolashoz...')
+          .setPlaceholder('Toggle a command or subcommand...')
           .addOptions(commandOptions),
       ),
     );
@@ -301,7 +301,7 @@ export async function handleDashboardComponent(interaction, client) {
 
   if (guildId !== interaction.guildId) {
     return interaction.reply({
-      content: 'Ez a dashboard egy masik szerverhez tartozik.',
+      content: 'This dashboard belongs to another server.',
       ephemeral: true,
     });
   }
